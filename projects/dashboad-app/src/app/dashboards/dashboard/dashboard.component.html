@@ -1,5 +1,8 @@
-<div class="page-wrapper" fxLayout="column">
-    <div >
+<div
+    class="page-wrapper"
+    fxLayout="column"
+>
+    <div>
         <input
             #dashboardname
             [value]="dashboard.name"
@@ -16,11 +19,24 @@
             placeholder="Dashboard Height"
         >
     </div>
-    <div
-        class="grid"
-        [ngStyle]="{'grid-template-columns': 'repeat(10, 1fr)', 'grid-template-rows': 'repeat(10, 1fr)'}"
-        fxFlex="1 0"
-    >
-    <div class="tile" *ngFor="let tile of tiles" > Hello</div>
+    <div fxFlex="1 0" class="grid-wrapper">
+        <div
+            class="grid grid-template"
+            [ngStyle]="{'grid-template-columns': 'repeat(10, 1fr)', 'grid-template-rows': 'repeat(10, 1fr)'}"
+        >
+            <div
+                class="tile"
+                *ngFor="let tile of tiles"
+                (dragstart)="dragStart($event, tile)"
+                (drageend)="dragEnd($event, tile)"
+                (dragenter)="dragEnter($event, tile)"
+                draggable="true"
+            >{{tile.row}}:{{tile.column}}</div>
+        </div>
+        <div #grideditor
+            class="grid grid-tiles"
+            [ngStyle]="{'grid-template-columns': 'repeat(10, 1fr)', 'grid-template-rows': 'repeat(10, 1fr)'}"
+        >
+        </div>
     </div>
 </div>

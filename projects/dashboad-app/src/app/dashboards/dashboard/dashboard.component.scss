@@ -8,14 +8,27 @@
 }
 
 
+.grid-wrapper{
+    position: relative;
+}
+
 .grid{
+    height: 100%;
+    width: 100%;
+    position: absolute;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
-    background-color: red;
+
+    &.grid-tiles{
+        pointer-events: none;
+    } 
 }
 
 .tile{
-    border: solid 2px white;
-    background-color: #ccc;
+    border: solid 1px lightgray;
+    background-color: white;
+    &:hover{
+        background-color: lightgray;
+    }
 }
