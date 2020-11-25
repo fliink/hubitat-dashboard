@@ -1,0 +1,21 @@
+:host{
+    height: 100%;
+    display: block;
+}
+
+.page-wrapper{
+    height: 100%;
+}
+
+
+.grid{
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    background-color: red;
+}
+
+.tile{
+    border: solid 2px white;
+    background-color: #ccc;
+}

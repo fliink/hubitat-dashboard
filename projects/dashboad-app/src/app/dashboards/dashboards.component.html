@@ -1,0 +1,5 @@
+<button [routerLink]="['.', 'new']">New</button>
+
+<div *ngFor="let dashboard of dashboards$ | async" [routerLink]="['.',dashboard.id || 'new']">
+  {{dashboard.id}}: {{dashboard.name}}
+</div>

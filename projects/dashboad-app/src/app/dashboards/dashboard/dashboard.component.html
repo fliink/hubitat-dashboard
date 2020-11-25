@@ -1,0 +1,26 @@
+<div class="page-wrapper" fxLayout="column">
+    <div >
+        <input
+            #dashboardname
+            [value]="dashboard.name"
+            placeholder="Dashboard Name"
+        >
+        <input
+            #dashboardname
+            [value]="dashboard.width"
+            placeholder="Dashboard Width"
+        >
+        <input
+            #dashboardname
+            [value]="dashboard.height"
+            placeholder="Dashboard Height"
+        >
+    </div>
+    <div
+        class="grid"
+        [ngStyle]="{'grid-template-columns': 'repeat(10, 1fr)', 'grid-template-rows': 'repeat(10, 1fr)'}"
+        fxFlex="1 0"
+    >
+    <div class="tile" *ngFor="let tile of tiles" > Hello</div>
+    </div>
+</div>
