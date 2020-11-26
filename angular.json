@@ -164,5 +164,8 @@
       }
     }
   },
-  "defaultProject": "dashboad-app"
+  "defaultProject": "dashboad-app",
+  "cli": {
+    "analytics": false
+  }
 }

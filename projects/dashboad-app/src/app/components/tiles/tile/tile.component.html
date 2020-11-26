@@ -1,0 +1,3 @@
+<div [ngSwitch]="config.type" class="tile">
+    <app-light-tile class="tile" *ngSwitchCase="'light'" [device]="config.device"></app-light-tile>
+</div>

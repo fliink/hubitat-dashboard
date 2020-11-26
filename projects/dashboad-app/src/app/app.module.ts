@@ -7,20 +7,29 @@ import { DashboardsComponent } from './dashboards/dashboards.component';
 import { DashboardComponent } from './dashboards/dashboard/dashboard.component';
 import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MakerApiService } from '../services/maker-api.service';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { LightTileComponent } from './components/tiles/light-tile/light-tile.component';
+import { TileComponent } from './components/tiles/tile/tile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardsComponent,
-    DashboardComponent
+    DashboardComponent,
+    LightTileComponent,
+    TileComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     RouterModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    HttpClientModule,
+    FormsModule
   ],
-  providers: [],
+  providers: [MakerApiService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

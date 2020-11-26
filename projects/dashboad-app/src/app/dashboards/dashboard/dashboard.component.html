@@ -1,42 +1,41 @@
-<div
-    class="page-wrapper"
-    fxLayout="column"
->
+<div class="page-wrapper" fxLayout="column">
     <div>
-        <input
-            #dashboardname
-            [value]="dashboard.name"
-            placeholder="Dashboard Name"
-        >
-        <input
-            #dashboardname
-            [value]="dashboard.width"
-            placeholder="Dashboard Width"
-        >
-        <input
-            #dashboardname
-            [value]="dashboard.height"
-            placeholder="Dashboard Height"
-        >
+        <input #dashboardname [value]="dashboard.name" placeholder="Dashboard Name">
+        <input #dashboardname [value]="dashboard.width" placeholder="Dashboard Width">
+        <input #dashboardname [value]="dashboard.height" placeholder="Dashboard Height">
     </div>
     <div fxFlex="1 0" class="grid-wrapper">
-        <div
-            class="grid grid-template"
-            [ngStyle]="{'grid-template-columns': 'repeat(10, 1fr)', 'grid-template-rows': 'repeat(10, 1fr)'}"
-        >
-            <div
-                class="tile"
-                *ngFor="let tile of tiles"
-                (dragstart)="dragStart($event, tile)"
-                (drageend)="dragEnd($event, tile)"
-                (dragenter)="dragEnter($event, tile)"
-                draggable="true"
-            >{{tile.row}}:{{tile.column}}</div>
+        <div class="grid grid-template"
+            [ngStyle]="{'grid-template-columns': 'repeat(10, 1fr)', 'grid-template-rows': 'repeat(10, 1fr)'}">
+            <div class="tile" *ngFor="let tile of gridCells" (dragstart)="dragStart($event, tile)"
+                (dragend)="dragEnd($event, tile)" (dragenter)="dragEnter($event, tile)" draggable="true">
+                {{tile.row}}:{{tile.column}}</div>
         </div>
-        <div #grideditor
-            class="grid grid-tiles"
-            [ngStyle]="{'grid-template-columns': 'repeat(10, 1fr)', 'grid-template-rows': 'repeat(10, 1fr)'}"
-        >
+        <div #grideditor class="grid grid-tiles"
+            [ngStyle]="{'grid-template-columns': 'repeat(10, 1fr)', 'grid-template-rows': 'repeat(10, 1fr)'}">
+            <app-tile *ngFor="let tile of tiles" [config]="tile"></app-tile>
         </div>
+    </div>
+    <div class="editor" [ngClass]="{closed: !editorActive}">
+        <input #tiletitle value="" placeholder="Title">
+
+        <div>
+            <input #tiledevice placeholder="Select a device" (focus)="setDeviceListVisible(true)"
+                (blur)="setDeviceListVisible(false)" [value]="selectedDevice?.label">
+            <div *ngIf="deviceListVisible">
+                <div *ngFor="let device of devices$ | async" (mousedown)="selectDevice(device)" class="device-list">
+                    {{device.label}}</div>
+            </div>
+        </div>
+        <div *ngIf="selectedDevice">
+            <input placeholder="Capability" (focus)="setCapabilityListVisible(true)"
+                (blur)="setCapabilityListVisible(false)" [value]="selectedCapability">
+            <div *ngIf="capabilityListVisible">
+                <div *ngFor="let capability of selectedDevice.capabilities" (mousedown)="selectCapability(capability)"
+                    class="device-list">{{capability}}</div>
+            </div>
+        </div>
+
+
     </div>
 </div>
