@@ -1,10 +1,16 @@
 <div style="position: relative; height: 100%;" [ngStyle]="{'background-color': rgb}">
-    <div fxFlexLayout="row" style="height: 100%; width: 100%;">
+    <!-- <div fxFlexLayout="row" style="height: 100%; width: 100%;">
         <div fxFlex="1 0" class="color-slider"></div>
         <div fxFlex="1 0" class="level-slider"></div>
     </div>
     <div style="position: absolute; top: 0px;">
         <div *ngFor="let attribute of device?.attributes | keyvalue">{{attribute.key}}:
             {{attribute.value}}</div>
+    </div> -->
+    <div>{{device?.attributes.effectName}}</div>
+    <div>
+        <div *ngFor="let effect of device?.attributes?.lightEffects | keyvalue" (click)="setEffect(effect.key)">
+            {{effect.value}}
+        </div>
     </div>
 </div>

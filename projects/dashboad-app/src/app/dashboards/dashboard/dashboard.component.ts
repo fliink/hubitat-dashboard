@@ -15,12 +15,12 @@ import { LightTileComponent } from '../../components/tiles/light-tile/light-tile
 })
 export class DashboardComponent implements OnInit {
 
-  @ViewChild('grideditor') gridEditor: ElementRef<HTMLDivElement>;
-  @ViewChild('editorcontainer', { read: ViewContainerRef }) editorcontainer: ViewContainerRef;
+  @ViewChild('grideditor') gridEditor!: ElementRef<HTMLDivElement>;
+  @ViewChild('editorcontainer', { read: ViewContainerRef }) editorcontainer!: ViewContainerRef;
 
   dashboard: Dashboard = { id: 0, name: '', height: 10, width: 10 };
   gridCells: { row: number, column: number }[] = [];
-  activeTemplateTile: { element: HTMLElement, start: { row: number, column: number }, end?: { row: number, column: number } };
+  activeTemplateTile?: { element: HTMLElement, start: { row: number, column: number }, end?: { row: number, column: number } };
 
   editorActive: boolean = false;
   devices$: Observable<HubitatDevice[]>;
@@ -32,11 +32,12 @@ export class DashboardComponent implements OnInit {
   tiles: DashboardTile[] = [];
   activeTile: DashboardTile = undefined;
 
-  constructor(private makerService: MakerApiService, private componentFactoryResolver: ComponentFactoryResolver, private vc: ViewContainerRef) { }
+  constructor(private makerService: MakerApiService, private componentFactoryResolver: ComponentFactoryResolver, private vc: ViewContainerRef) { 
+    this.devices$ = this.makerService.devices$;
+    this.makerService.loadDevices();
+  }
 
   ngOnInit(): void {
-
-    this.devices$ = this.makerService.getDevices();
     for (let i = 1; i <= this.dashboard.height; i++) {
       for (let j = 1; j <= this.dashboard.width; j++) {
         this.gridCells.push({
@@ -65,10 +66,10 @@ export class DashboardComponent implements OnInit {
 
   dragEnd(dragEvent: DragEvent, tile: { row: number, column: number }): void {
 
-    const gridColumn = Math.min(this.activeTemplateTile.start.column, this.activeTemplateTile.end!.column);
-    const gridRow = Math.min(this.activeTemplateTile.start.row, this.activeTemplateTile.end!.row);
-    const gridColumnEnd = Math.max(this.activeTemplateTile.start.column + 1, this.activeTemplateTile.end!.column + 1);
-    const gridRowEnd = Math.max(this.activeTemplateTile.start.row + 1, this.activeTemplateTile.end!.row + 1);
+    const gridColumn = Math.min(this.activeTemplateTile!.start.column, this.activeTemplateTile!.end!.column);
+    const gridRow = Math.min(this.activeTemplateTile!.start.row, this.activeTemplateTile!.end!.row);
+    const gridColumnEnd = Math.max(this.activeTemplateTile!.start.column + 1, this.activeTemplateTile!.end!.column + 1);
+    const gridRowEnd = Math.max(this.activeTemplateTile!.start.row + 1, this.activeTemplateTile!.end!.row + 1);
 
 
     this.activeTile = {

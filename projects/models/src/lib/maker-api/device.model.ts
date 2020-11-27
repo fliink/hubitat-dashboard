@@ -5,7 +5,7 @@ export interface HubitatDevice {
     type?: string;
     model?: string;
     capabilities?: string[];
-    attributes?: HubitatDeviceAttributes;
+    attributes?: HubitatDeviceAttributes | {name: string}[];
     commands: HubitatDeviceCommand[]
 }
 
