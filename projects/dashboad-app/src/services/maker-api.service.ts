@@ -16,6 +16,10 @@ export class MakerApiService {
     devices$: Observable<HubitatDevice[]> = this._deviceArray.asObservable();
     constructor(private http: HttpClient, private socket: Socket) {
         this._devices = {};
+        this.socket.on('message', (x: {deviceId: string, value: any, name: string})=>{
+            this._devices[x.deviceId].attributes[x.name] = x.value;
+            console.log('message!!', x);
+        })
      
     }
 
@@ -47,28 +51,10 @@ export class MakerApiService {
 
     sendCommand(deviceId: string, commands: { [key: string]: any }) {
         const requests = Object.keys(commands).map(command => {
-            let url = `${this.apiHost}/${deviceId}/${command}`;
-            if (commands[command]) {
-                url = `${url}/${commands[command]}`;
-            }
-            return this.http.get<HubitatDevice>(`${url}${this.apiKey}`)
+            let url = `${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${command}&value=${commands[command]}`;
+            return this.http.get<HubitatDevice>(`${url}`);
         });
 
-        return forkJoin(requests).pipe(delay(500), mergeMap(result=>{
-            let url = `${this.apiHost}/${deviceId}/refresh`;
-            return this.http.get<HubitatDevice>(`${url}${this.apiKey}`).pipe(map(refreshResult=>{
-                refreshResult.attributes = (<{ name: string }[]>refreshResult.attributes).reduce((a, b) => {
-                    a[b.name] = b.currentValue;
-                    return a;
-                }, {}) || {};
-                if (refreshResult.attributes.lightEffects) {
-                    refreshResult.attributes.lightEffects = JSON.parse(<string>refreshResult.attributes.lightEffects);
-                }
-
-                Object.assign(this._devices[refreshResult.id], refreshResult);
-                this._deviceArray.next(Object.values(this._devices));
-                return refreshResult;
-            }));
-        }));
+        return forkJoin(requests);
     }
 }
