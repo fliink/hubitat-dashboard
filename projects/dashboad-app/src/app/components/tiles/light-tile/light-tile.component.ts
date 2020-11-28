@@ -59,9 +59,7 @@ export class LightTileComponent implements OnInit, OnChanges {
   }
 
   setEffect(id: number): void {
-    this.hubitatService.sendCommand(this.device.id, 'on').subscribe();
-    this.hubitatService.sendCommand(this.device.id, 'setLevel', 100).subscribe();
-    this.hubitatService.sendCommand(this.device.id, 'setEffect', id).subscribe();
+    this.hubitatService.sendCommand(this.device.id, {on: '', setLevel: 100, setEffect: id}).subscribe();
   }
 
 }

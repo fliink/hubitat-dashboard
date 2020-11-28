@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { LightTileComponent } from './components/tiles/light-tile/light-tile.component';
 import { TileComponent } from './components/tiles/tile/tile.component';
+import { SocketIoModule } from 'ngx-socket-io';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { TileComponent } from './components/tiles/tile/tile.component';
     RouterModule,
     FlexLayoutModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    SocketIoModule.forRoot({ url: 'http://localhost:8080', options: { } })
   ],
   providers: [MakerApiService],
   bootstrap: [AppComponent]
