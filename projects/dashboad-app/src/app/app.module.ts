@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { LightTileComponent } from './components/tiles/light-tile/light-tile.component';
 import { TileComponent } from './components/tiles/tile/tile.component';
 import { SocketIoModule } from 'ngx-socket-io';
+import { DropListComponent } from './components/drop-list/drop-list.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { SocketIoModule } from 'ngx-socket-io';
     DashboardsComponent,
     DashboardComponent,
     LightTileComponent,
-    TileComponent
+    TileComponent,
+    DropListComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,22 @@
+<div tabindex="0" (blur)="showOptions = false" (focus)="showOptions = true">
+    <div class="selected-option" (click)="showOptions = true">
+        <ng-template
+            [ngTemplateOutlet]="itemTemplate"
+            [ngTemplateOutletContext]="{$implicit: selectedItem}"
+        ></ng-template>
+        <ng-container *ngIf="!selectedItem">
+            <div>Select Capability</div>
+        </ng-container>
+    </div>
+    <div class="options" [ngClass]="{'options-open': showOptions }" >
+        <div class="option"
+            *ngFor="let item of items"
+            (click)="selectItem(item)"
+        >
+            <ng-template
+                [ngTemplateOutlet]="itemTemplate"
+                [ngTemplateOutletContext]="{$implicit: item}"
+            ></ng-template>
+        </div>
+    </div>
+</div>

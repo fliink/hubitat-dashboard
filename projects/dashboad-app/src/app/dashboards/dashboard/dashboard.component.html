@@ -20,20 +20,25 @@
         <input #tiletitle value="" placeholder="Title">
 
         <div>
-            <input #tiledevice placeholder="Select a device" (focus)="setDeviceListVisible(true)"
-                (blur)="setDeviceListVisible(false)" [value]="selectedDevice?.label">
-            <div *ngIf="deviceListVisible">
-                <div *ngFor="let device of devices$ | async" (mousedown)="selectDevice(device)" class="device-list">
-                    {{device.label}}</div>
-            </div>
+            <app-drop-list [items]="devices$ | async" [selectedItem]="selectedDevice" (changed)="selectDevice($event)">
+                <ng-template #itemTemplate let-item>
+                    {{item?.label}}
+                </ng-template>
+            </app-drop-list>
         </div>
         <div *ngIf="selectedDevice">
-            <input placeholder="Capability" (focus)="setCapabilityListVisible(true)"
+            <!-- <input placeholder="Capability" (focus)="setCapabilityListVisible(true)"
                 (blur)="setCapabilityListVisible(false)" [value]="selectedCapability">
             <div *ngIf="capabilityListVisible">
                 <div *ngFor="let capability of selectedDevice.capabilities" (mousedown)="selectCapability(capability)"
                     class="device-list">{{capability}}</div>
-            </div>
+            </div> -->
+
+            <app-drop-list [items]="selectedDevice.capabilities">
+                <ng-template #itemTemplate let-item>
+                    {{item}}
+                </ng-template>
+            </app-drop-list>
         </div>
 
 

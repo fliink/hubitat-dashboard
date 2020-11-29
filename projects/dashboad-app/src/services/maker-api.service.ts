@@ -19,13 +19,14 @@ export class MakerApiService {
         this.socket.on('message', (x: {deviceId: string, value: any, name: string})=>{
             this._devices[x.deviceId].attributes[x.name] = x.value;
             console.log('message!!', x);
-        })
+        });
+        this.init();
      
     }
 
     init(){
         //http://192.168.1.156/apps/api/3845/postURL/[URL]?access_token=YOUR_ACCESS_TOKEN
-        const registerUrl = `http://192.168.1.2/apps/api/45/postURL/http%3A%2F%2Flocalhost%3A8080%2FdeviceUpdates${this.apiKey}`;
+        const registerUrl = `http://192.168.1.2/apps/api/45/postURL/http%3A%2F%2F192.168.1.40%3A8080%2FdeviceUpdates${this.apiKey}`;
         this.http.get(registerUrl).subscribe();
     }
 

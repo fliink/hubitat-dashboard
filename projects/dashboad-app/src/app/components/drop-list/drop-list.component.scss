@@ -1,0 +1,22 @@
+.options {
+    background-color: white;
+    display: none;
+
+    &.options-open {
+        display: block;
+    }
+
+    .option {
+        padding: 5px;
+        cursor: pointer;
+        &:hover {
+            background-color: lightgray;
+        }
+    }
+}
+
+.selected-option {
+    cursor: pointer;
+    background-color: white;
+    padding: 5px;
+}
