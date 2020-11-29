@@ -1,0 +1,7 @@
+<div class="slider-container">
+    <div class="slider-track" #slidertrack>
+
+    </div>
+    <div class="slider-handle" draggable="true" [ngStyle]="{bottom: 'calc(' + value + '% - 5px)'}"
+        (dragstart)="handleDragStart($event)" (dragend)="handleDragEnd($event)" (drag)="handleDragging($event)" #sliderhandle></div>
+</div>

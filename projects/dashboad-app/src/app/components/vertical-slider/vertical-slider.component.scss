@@ -1,0 +1,18 @@
+.slider-track{
+    width: 100%;
+    background-image: linear-gradient(white, black);
+    height: 100%;
+}
+
+.slider-container{
+    height: 100%;
+    position: relative;
+}
+
+.slider-handle{
+    position: absolute;
+    height: 10px;
+    width: 100%;
+    background-color: red;
+    cursor: pointer;
+}

@@ -5,7 +5,7 @@
             [ngTemplateOutletContext]="{$implicit: selectedItem}"
         ></ng-template>
         <ng-container *ngIf="!selectedItem">
-            <div>Select Capability</div>
+            <div>{{label}}</div>
         </ng-container>
     </div>
     <div class="options" [ngClass]="{'options-open': showOptions }" >

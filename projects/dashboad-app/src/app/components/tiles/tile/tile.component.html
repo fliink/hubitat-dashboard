@@ -1,3 +1,10 @@
-<div [ngSwitch]="config.type" class="tile">
-    <app-light-tile class="tile" *ngSwitchCase="'light'" [device]="config.device"></app-light-tile>
+<div class="tile" *ngIf="config?.device" fxLayout="column">
+    <div fxFlex="0 1 0%">{{config.name || config.device.label}}</div>
+    <div fxFlex="1 0 calc(100% - 8px)">
+        <app-light-tile *ngIf="config.device.capabilityLookup.Light" [device]="config.device"></app-light-tile>
+        <app-sensor-tile *ngIf="config.device.capabilityLookup.Sensor && !config.device.capabilityLookup.Thermostat"
+            [device]="config.device"></app-sensor-tile>
+        <app-thermostat-tile *ngIf="config.device.capabilityLookup.Thermostat" [device]="config.device">
+        </app-thermostat-tile>
+    </div>
 </div>

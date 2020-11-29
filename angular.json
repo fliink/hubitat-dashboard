@@ -22,7 +22,7 @@
             "main": "projects/dashboad-app/src/main.ts",
             "polyfills": "projects/dashboad-app/src/polyfills.ts",
             "tsConfig": "projects/dashboad-app/tsconfig.app.json",
-            "aot": true,
+            "aot": false,
             "assets": [
               "projects/dashboad-app/src/favicon.ico",
               "projects/dashboad-app/src/assets"

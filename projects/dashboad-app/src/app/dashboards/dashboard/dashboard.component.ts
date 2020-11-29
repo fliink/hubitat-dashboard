@@ -5,7 +5,7 @@ import { Dashboard, DashboardTile } from 'projects/models/src/lib/dashboard-api/
 import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 import { element } from 'protractor';
 import { Observable } from 'rxjs';
-import { takeWhile } from 'rxjs/operators';
+import { skipWhile, take, takeWhile } from 'rxjs/operators';
 import { LightTileComponent } from '../../components/tiles/light-tile/light-tile.component';
 
 @Component({
@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
   @ViewChild('grideditor') gridEditor!: ElementRef<HTMLDivElement>;
   @ViewChild('editorcontainer', { read: ViewContainerRef }) editorcontainer!: ViewContainerRef;
 
-  dashboard: Dashboard = { id: 0, name: '', height: 10, width: 10 };
+  dashboard: Dashboard = { id: 0, name: '', height: 8, width: 8 };
   gridCells: { row: number, column: number }[] = [];
   activeTemplateTile?: { element: HTMLElement, start: { row: number, column: number }, end?: { row: number, column: number } };
 
@@ -32,9 +32,29 @@ export class DashboardComponent implements OnInit {
   tiles: DashboardTile[] = [];
   activeTile: DashboardTile = undefined;
 
+  editorMode: boolean = true;
+
   constructor(private makerService: MakerApiService, private componentFactoryResolver: ComponentFactoryResolver, private vc: ViewContainerRef) { 
     this.devices$ = this.makerService.devices$;
     this.makerService.loadDevices();
+    this.devices$.pipe(skipWhile(x=>!x.length), take(1)).subscribe(devices=>{
+      const savedDashboardString = localStorage.getItem('dashboard');
+      if(savedDashboardString){
+        const savedDashboard = JSON.parse(savedDashboardString) as DashboardTile[];
+        savedDashboard.forEach(t=>{
+          t.device = devices.find(d=>d.id === t.device.id);
+          this.tiles.push(t);
+        });
+      }
+    });
+  }
+
+  toggleEdit(){
+    this.editorMode = !this.editorMode;
+  }
+
+  save(){
+    localStorage.setItem('dashboard', JSON.stringify(this.tiles));
   }
 
   ngOnInit(): void {
@@ -42,7 +62,7 @@ export class DashboardComponent implements OnInit {
       for (let j = 1; j <= this.dashboard.width; j++) {
         this.gridCells.push({
           row: i,
-          column: j
+          column: j 
         });
       }
     }

@@ -20,14 +20,14 @@
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
 
-    &.grid-tiles{
+    
+    &.grid-tiles.edit-mode{
         pointer-events: none;
     } 
 }
 
 .tile{
     border: solid 1px lightgray;
-    background-color: white;
     &:hover{
         background-color: lightgray;
     }

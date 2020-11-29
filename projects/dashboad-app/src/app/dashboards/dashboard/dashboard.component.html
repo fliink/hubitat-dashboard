@@ -3,24 +3,27 @@
         <input #dashboardname [value]="dashboard.name" placeholder="Dashboard Name">
         <input #dashboardname [value]="dashboard.width" placeholder="Dashboard Width">
         <input #dashboardname [value]="dashboard.height" placeholder="Dashboard Height">
+        <button (click)="toggleEdit()">Edit Mode</button>
+        <button (click)="save()">Save</button>
     </div>
     <div fxFlex="1 0" class="grid-wrapper">
         <div class="grid grid-template"
-            [ngStyle]="{'grid-template-columns': 'repeat(10, 1fr)', 'grid-template-rows': 'repeat(10, 1fr)'}">
+        *ngIf="editorMode"
+            [ngStyle]="{'grid-template-columns': 'repeat(8, 1fr)', 'grid-template-rows': 'repeat(8, 1fr)'}">
             <div class="tile" *ngFor="let tile of gridCells" (dragstart)="dragStart($event, tile)"
                 (dragend)="dragEnd($event, tile)" (dragenter)="dragEnter($event, tile)" draggable="true">
                 {{tile.row}}:{{tile.column}}</div>
         </div>
-        <div #grideditor class="grid grid-tiles"
-            [ngStyle]="{'grid-template-columns': 'repeat(10, 1fr)', 'grid-template-rows': 'repeat(10, 1fr)'}">
+        <div #grideditor class="grid grid-tiles" [ngClass]="{'edit-mode': editorMode}"
+            [ngStyle]="{'grid-template-columns': 'repeat(8, 1fr)', 'grid-template-rows': 'repeat(8, 1fr)'}">
             <app-tile *ngFor="let tile of tiles" [config]="tile"></app-tile>
         </div>
     </div>
-    <div class="editor" [ngClass]="{closed: !editorActive}">
-        <input #tiletitle value="" placeholder="Title">
+    <div class="editor" [ngClass]="{closed: !editorActive || !editorMode}">
+        <input #tiletitle [value]="activeTile?.name" (input)="activeTile.name = $event.target.value" placeholder="Title">
 
         <div>
-            <app-drop-list [items]="devices$ | async" [selectedItem]="selectedDevice" (changed)="selectDevice($event)">
+            <app-drop-list label="Select Device" [items]="devices$ | async" [selectedItem]="selectedDevice" (changed)="selectDevice($event)">
                 <ng-template #itemTemplate let-item>
                     {{item?.label}}
                 </ng-template>
@@ -34,7 +37,7 @@
                     class="device-list">{{capability}}</div>
             </div> -->
 
-            <app-drop-list [items]="selectedDevice.capabilities">
+            <app-drop-list label="Select Capability" [items]="selectedDevice.capabilities">
                 <ng-template #itemTemplate let-item>
                     {{item}}
                 </ng-template>

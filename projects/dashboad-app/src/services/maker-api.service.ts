@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { delay, map, mergeMap, share } from 'rxjs/operators';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
+import { DeviceCapabilities, HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 import { Socket } from 'ngx-socket-io';
 
 @Injectable()
@@ -16,17 +16,17 @@ export class MakerApiService {
     devices$: Observable<HubitatDevice[]> = this._deviceArray.asObservable();
     constructor(private http: HttpClient, private socket: Socket) {
         this._devices = {};
-        this.socket.on('message', (x: {deviceId: string, value: any, name: string})=>{
+        this.socket.on('message', (x: { deviceId: string, value: any, name: string }) => {
             this._devices[x.deviceId].attributes[x.name] = x.value;
             console.log('message!!', x);
         });
         this.init();
-     
+
     }
 
-    init(){
+    init() {
         //http://192.168.1.156/apps/api/3845/postURL/[URL]?access_token=YOUR_ACCESS_TOKEN
-        const registerUrl = `http://192.168.1.2/apps/api/45/postURL/http%3A%2F%2F192.168.1.40%3A8080%2FdeviceUpdates${this.apiKey}`;
+        const registerUrl = `http://192.168.1.2/apps/api/45/postURL/http%3A%2F%2F192.168.1.103%3A8080%2FdeviceUpdates${this.apiKey}`;
         this.http.get(registerUrl).subscribe();
     }
 
@@ -37,6 +37,10 @@ export class MakerApiService {
                 if (x.attributes.lightEffects) {
                     x.attributes.lightEffects = JSON.parse(<string>x.attributes.lightEffects);
                 }
+                x.capabilityLookup = x.capabilities.reduce((a: DeviceCapabilities, b) => {
+                    a[b] = true;
+                    return a;
+                }, {});
             });
 
             this._devices = result.reduce((a: { [key: string]: HubitatDevice }, b) => {

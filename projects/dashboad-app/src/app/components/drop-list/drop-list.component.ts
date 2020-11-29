@@ -7,6 +7,7 @@ import { Component, ContentChild, ElementRef, EventEmitter, Input, OnInit, Outpu
 })
 export class DropListComponent implements OnInit {
 
+  @Input() label: string = 'Select';
   @Input() items: any[];
   @Input() selectedItem: any;
   @ContentChild('itemTemplate') itemTemplate: TemplateRef<ElementRef>;

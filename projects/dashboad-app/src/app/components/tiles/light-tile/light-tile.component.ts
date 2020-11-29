@@ -11,15 +11,23 @@ export class LightTileComponent implements OnInit, OnChanges {
 
   @Input() device!: HubitatDevice;
   rgb: any;
+  selectedEffect: { key: number, value: string };
 
   constructor(private hubitatService: MakerApiService) {
     console.log('dd', this.device);
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.device?.currentValue) {
-      const rgb = this.hslToRgb();
-      this.rgb = `rgb(${rgb?.r},${rgb?.g},${rgb?.b})`
-      console.log('rgb', rgb);
+      if (this.device.capabilityLookup.ColorControl) {
+        const rgb = this.hslToRgb();
+        this.rgb = `rgb(${rgb?.r},${rgb?.g},${rgb?.b})`
+      }
+      if (this.device.capabilityLookup.LightEffects) {
+        const selectedEffect = Object.entries(this.device.attributes.lightEffects).find(x => {
+          return x[1] === this.device.attributes.effectName;
+        });
+        this.selectedEffect = { key: <number>selectedEffect[1], value: <string>selectedEffect[1] };
+      }
     }
   }
 
@@ -59,7 +67,11 @@ export class LightTileComponent implements OnInit, OnChanges {
   }
 
   setEffect(id: number): void {
-    this.hubitatService.sendCommand(this.device.id, {on: '', setLevel: 100, setEffect: id}).subscribe();
+    this.hubitatService.sendCommand(this.device.id, { on: '', setEffect: id }).subscribe();
+  }
+
+  setLevel(value: number): void {
+    this.hubitatService.sendCommand(this.device.id, { setLevel: Math.round(value) }).subscribe();
   }
 
 }

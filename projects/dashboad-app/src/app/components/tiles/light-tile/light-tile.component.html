@@ -1,7 +1,8 @@
-<div style="position: relative; height: 100%;" [ngStyle]="{'background-color': rgb}">
-    <app-drop-list [items]="device?.attributes?.lightEffects | keyvalue">
+<div *ngIf="device" style="position: relative; height: 100%;" [ngStyle]="{'background-color': rgb}" fxLayout="column">
+    <app-drop-list *ngIf="device.capabilityLookup.LightEffects" [items]="device?.attributes?.lightEffects | keyvalue" [selectedItem]="selectedEffect" (changed)="setEffect($event?.key)" label="Select Effect">
         <ng-template #itemTemplate let-item>
             {{item?.value}}
         </ng-template>
     </app-drop-list>
+    <app-vertical-slider *ngIf="device.capabilityLookup.SwitchLevel" fxFlex="1 0" [value]="device.attributes?.level" (changed)="setLevel($event)"></app-vertical-slider>
 </div>

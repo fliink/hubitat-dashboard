@@ -14,6 +14,9 @@ import { LightTileComponent } from './components/tiles/light-tile/light-tile.com
 import { TileComponent } from './components/tiles/tile/tile.component';
 import { SocketIoModule } from 'ngx-socket-io';
 import { DropListComponent } from './components/drop-list/drop-list.component';
+import { VerticalSliderComponent } from './components/vertical-slider/vertical-slider.component';
+import { SensorTileComponent } from './components/tiles/sensor-tile/sensor-tile.component';
+import { ThermostatTileComponent } from './components/tiles/thermostat-tile/thermostat-tile.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +25,10 @@ import { DropListComponent } from './components/drop-list/drop-list.component';
     DashboardComponent,
     LightTileComponent,
     TileComponent,
-    DropListComponent
+    DropListComponent,
+    VerticalSliderComponent,
+    SensorTileComponent,
+    ThermostatTileComponent
   ],
   imports: [
     BrowserModule,
