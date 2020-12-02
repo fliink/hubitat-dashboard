@@ -6,7 +6,7 @@ export interface HubitatDevice {
     model?: string;
     capabilities?: string[];
     capabilityLookup?: DeviceCapabilities,
-    attributes?: HubitatDeviceAttributes | { name: string }[];
+    attributes?: HubitatDeviceAttributes;
     commands: HubitatDeviceCommand[]
 }
 
@@ -52,10 +52,15 @@ export interface HubitatDeviceAttributes {
     colorName?: string,
     colorTemperature?: number,
     effectName?: string,
+    humidity?: number,
+    illuminance?: number,
     hue?: number,
     level?: number,
+    thermostatSetpoint?: number,
     lightEffects?: { [key: number]: string }
     saturation?: number,
+    temperature?: number,
+    motion?: string,
     switch?: "on" | "off"
 }
 

@@ -94,6 +94,7 @@ export class DashboardComponent implements OnInit {
 
     this.activeTile = {
       id: 0,
+      device: undefined,
       name: 'New Tile',
       type: 'light',
       position: {

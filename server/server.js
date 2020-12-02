@@ -7,7 +7,7 @@ const MongoClient = require('mongodb').MongoClient
 
 const app = express();
 var corsOptions = {
-  origin: 'http://localhost:4201',
+  origin: 'http://192.168.1.103',
   credentials: true
 };
 
@@ -79,9 +79,9 @@ app.get("/sendCommand", (req, res) => {
 const server = app.listen(8080);
 
 var io = require('socket.io')(server, {
-  origins: ['http://localhost:4201'],
+  origins: ['http://192.168.1.103'],
   cors: {
-    origin: 'http://localhost:4201',
+    origin: 'http://192.168.1.103',
     credentials: true
   }
 });

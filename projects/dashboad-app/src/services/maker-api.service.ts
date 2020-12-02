@@ -8,7 +8,7 @@ import { Socket } from 'ngx-socket-io';
 @Injectable()
 export class MakerApiService {
 
-    private apiHost = 'http://localhost:8080';
+    private apiHost = 'http://192.168.1.49:8080';
     private apiKey = '?access_token=bbfc30d1-f4cc-4ace-a5a0-20a492d0eaa1';
 
     private _devices: { [key: string]: HubitatDevice };
@@ -26,7 +26,7 @@ export class MakerApiService {
 
     init() {
         //http://192.168.1.156/apps/api/3845/postURL/[URL]?access_token=YOUR_ACCESS_TOKEN
-        const registerUrl = `http://192.168.1.2/apps/api/45/postURL/http%3A%2F%2F192.168.1.40%3A8080%2FdeviceUpdates${this.apiKey}`;
+        const registerUrl = `http://192.168.1.2/apps/api/45/postURL/http%3A%2F%2F192.168.1.49%3A8080%2FdeviceUpdates${this.apiKey}`;
         this.http.get(registerUrl).subscribe();
     }
 

@@ -16,10 +16,14 @@ export class DashboardsComponent implements OnInit {
     this.dashboards = [
       {
         id: 1,
+        height:8,
+        width: 8,
         name: 'Home'
       },
       {
         id: 2,
+        height:8,
+        width: 8,
         name: 'Office'
       }
     ];
@@ -30,6 +34,8 @@ export class DashboardsComponent implements OnInit {
   newDashboard(): void {
     this.dashboards.push({
       id: 3,
+      height:8,
+      width: 8,
       name: 'Bedroom'
     });
   }
