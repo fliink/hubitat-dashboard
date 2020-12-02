@@ -1,7 +1,6 @@
 .options {
-    background-color: white;
+    background-color: var(--control-background);
     display: none;
-
     &.options-open {
         display: block;
     }
@@ -17,6 +16,6 @@
 
 .selected-option {
     cursor: pointer;
-    background-color: white;
+    background-color: var(--control-background);
     padding: 5px;
 }

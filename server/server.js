@@ -7,7 +7,7 @@ const MongoClient = require('mongodb').MongoClient
 
 const app = express();
 var corsOptions = {
-  origin: 'http://localhost:4200',
+  origin: 'http://localhost:4201',
   credentials: true
 };
 
@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/deviceUpdates", (req, res) => {
-  console.log({ body: req.body.content });
+  // console.log({ body: req.body.content });
   io.emit('message', req.body.content);
 });
 
@@ -79,9 +79,9 @@ app.get("/sendCommand", (req, res) => {
 const server = app.listen(8080);
 
 var io = require('socket.io')(server, {
-  origins: ['http://localhost:4200'],
+  origins: ['http://localhost:4201'],
   cors: {
-    origin: 'http://localhost:4200',
+    origin: 'http://localhost:4201',
     credentials: true
   }
 });

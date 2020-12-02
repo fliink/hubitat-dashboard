@@ -17,6 +17,7 @@ import { DropListComponent } from './components/drop-list/drop-list.component';
 import { VerticalSliderComponent } from './components/vertical-slider/vertical-slider.component';
 import { SensorTileComponent } from './components/tiles/sensor-tile/sensor-tile.component';
 import { ThermostatTileComponent } from './components/tiles/thermostat-tile/thermostat-tile.component';
+import { ButtonSliderComponent } from './components/button-slider/button-slider.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ThermostatTileComponent } from './components/tiles/thermostat-tile/ther
     DropListComponent,
     VerticalSliderComponent,
     SensorTileComponent,
-    ThermostatTileComponent
+    ThermostatTileComponent,
+    ButtonSliderComponent
   ],
   imports: [
     BrowserModule,

@@ -1,10 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root{
+    --background-color: black;
+    --color: #efefef;
+    --control-background: #333;
+}
+
 html, body, app-root{
     margin: 0px;
     height: 100%;
     width: 100%;
-    color: white;
-    background-color: black;
+    color: var(--color);
+    background-color: var(--background-color);
 }
 
 html{
