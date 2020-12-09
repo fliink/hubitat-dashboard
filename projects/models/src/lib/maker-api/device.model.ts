@@ -61,7 +61,8 @@ export interface HubitatDeviceAttributes {
     saturation?: number,
     temperature?: number,
     motion?: string,
-    switch?: "on" | "off"
+    switch?: "on" | "off",
+    thermostatMode: "auto" | "cool" | "heat" | "off"
 }
 
 export interface HubitatDeviceCommand {

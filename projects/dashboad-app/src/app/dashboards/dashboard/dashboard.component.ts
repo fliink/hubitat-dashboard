@@ -32,7 +32,7 @@ export class DashboardComponent implements OnInit {
   tiles: DashboardTile[] = [];
   activeTile: DashboardTile = undefined;
 
-  editorMode: boolean = true;
+  editorMode: boolean = false;
 
   constructor(private makerService: MakerApiService, private componentFactoryResolver: ComponentFactoryResolver, private vc: ViewContainerRef) { 
     this.devices$ = this.makerService.devices$;

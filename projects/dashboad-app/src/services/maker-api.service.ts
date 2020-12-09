@@ -4,11 +4,12 @@ import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { delay, map, mergeMap, share } from 'rxjs/operators';
 import { DeviceCapabilities, HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 import { Socket } from 'ngx-socket-io';
+import { environment } from '../environments/environment';
 
 @Injectable()
 export class MakerApiService {
 
-    private apiHost = 'http://192.168.1.49:8080';
+    private apiHost = environment.apiUrl;
     private apiKey = '?access_token=bbfc30d1-f4cc-4ace-a5a0-20a492d0eaa1';
 
     private _devices: { [key: string]: HubitatDevice };

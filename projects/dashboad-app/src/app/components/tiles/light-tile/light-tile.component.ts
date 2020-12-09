@@ -14,7 +14,7 @@ export class LightTileComponent implements OnInit, OnChanges {
   selectedEffect: { key: number, value: string };
 
   constructor(private hubitatService: MakerApiService) {
-    console.log('dd', this.device);
+    console.log('device', this.device);
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.device?.currentValue) {

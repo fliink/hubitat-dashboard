@@ -69,6 +69,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/hubitat/",
               "browserTarget": "dashboad-app:build:production"
             }
           }

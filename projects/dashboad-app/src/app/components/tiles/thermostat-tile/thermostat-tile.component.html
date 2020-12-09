@@ -1,4 +1,6 @@
 <div *ngIf="device">
     <div>{{device.attributes.temperature}}/{{device.attributes.thermostatSetpoint}}°F</div>
     <div>{{device.attributes.humidity}}%</div>
+    <button (click)="adjustTemperature(1)">Up</button>
+    <button (click)="adjustTemperature(-1)">Down</button>
 </div>

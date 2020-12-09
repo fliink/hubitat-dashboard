@@ -6,15 +6,6 @@ const MongoClient = require('mongodb').MongoClient
 
 
 const app = express();
-var corsOptions = {
-  origin: 'http://192.168.1.103',
-  credentials: true
-};
-
-
-
-
-
 
 const apiHost = 'http://192.168.1.2/apps/api/45';
 const apiKey = '?access_token=bbfc30d1-f4cc-4ace-a5a0-20a492d0eaa1';
@@ -33,6 +24,7 @@ app.get("/", (req, res) => {
 
 app.post("/deviceUpdates", (req, res) => {
   // console.log({ body: req.body.content });
+  console.log('Device Updated');
   io.emit('message', req.body.content);
 });
 
@@ -49,6 +41,7 @@ app.use(corsStuff);
 
 
 app.get("/devices", (req, res) => {
+  console.log('devices');
   const uri = `${apiHost}/devices/all${apiKey}`;
   request({ uri }, (error, response, body) => {
     const result = JSON.parse(body);
@@ -69,21 +62,17 @@ app.get("/sendCommand", (req, res) => {
   uri = `${uri}${apiKey}`;
   console.log(uri);
   request({ uri }, (error, response, body) => {
-    console.error(body);
     const result = JSON.parse(body);
     devices = result;
     res.jsonp(devices);
   });
 });
 
-const server = app.listen(8080);
-
-var io = require('socket.io')(server, {
-  origins: ['http://192.168.1.103'],
-  cors: {
-    origin: 'http://192.168.1.103',
-    credentials: true
-  }
+const server = app.listen(8080, ()=>{
+  console.log('Hubitat Express Server Started.');
 });
+
+var io = require('socket.io')(server);
+
 
 
