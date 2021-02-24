@@ -1,6 +1,10 @@
-<div *ngIf="device">
-    <div>{{device.attributes.temperature}}/{{device.attributes.thermostatSetpoint}}°F</div>
-    <div>{{device.attributes.humidity}}%</div>
-    <button (click)="adjustTemperature(1)">Up</button>
-    <button (click)="adjustTemperature(-1)">Down</button>
+<div *ngIf="device" fxLayout="row">
+    <div fxFlex="1 0 auto">
+        <div>{{device.attributes.temperature}}/{{device.attributes.thermostatSetpoint}}°F</div>
+        <div>{{device.attributes.humidity}}%</div>
+    </div>
+    <div fxLayout="column">
+        <button (click)="adjustTemperature(1)">Up</button>
+        <button (click)="adjustTemperature(-1)">Down</button>
+    </div>
 </div>

@@ -4,7 +4,6 @@
 
 export const environment = {
   production: false,
-  makerApiUrl: 'http://192.168.1.2',
   apiUrl: 'http://localhost:8080'
 };
 

@@ -7,14 +7,18 @@
         <button (click)="save()">Save</button>
     </div>
     <div fxFlex="1 0" class="grid-wrapper">
-        <div class="grid grid-template"
+        <div class="grid grid-template" (mousemove)="mouseMove($event)" (touchmove)="mouseMove($event)"
         *ngIf="editorMode"
             [ngStyle]="{'grid-template-columns': 'repeat(8, 1fr)', 'grid-template-rows': 'repeat(8, 1fr)'}">
-            <div class="tile" *ngFor="let tile of gridCells" (dragstart)="dragStart($event, tile)"
-                (dragend)="dragEnd($event, tile)" (dragenter)="dragEnter($event, tile)" draggable="true">
+            <div class="tile" *ngFor="let tile of gridCells" (mousedown)="mouseDown($event, tile)" (touchstart)="mouseDown($event, tile)"
+
+                (mouseup)="mouseUp($event, tile)" (touchend)="mouseUp($event, tile)" (touchmove)="mouseEnter($event, tile)" 
+                [attr.data-tile-row]="tile.row"
+                [attr.data-tile-column]="tile.column"
+                  (mouseenter)="mouseEnter($event, tile)" >
                 {{tile.row}}:{{tile.column}}</div>
         </div>
-        <div #grideditor class="grid grid-tiles" [ngClass]="{'edit-mode': editorMode}"
+        <div #grideditor class="grid grid-tiles" [ngClass]="{'edit-mode': editorMode}" 
             [ngStyle]="{'grid-template-columns': 'repeat(8, 1fr)', 'grid-template-rows': 'repeat(8, 1fr)'}">
             <app-tile *ngFor="let tile of tiles" [config]="tile"></app-tile>
         </div>
