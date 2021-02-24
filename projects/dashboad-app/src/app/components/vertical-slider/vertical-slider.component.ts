@@ -14,22 +14,23 @@ export class VerticalSliderComponent implements OnInit {
   @Input() value: number = 0;
   private dragStartY: number;
 
-  
+
   private debouncer: Subject<number> = new Subject<number>();
   @Output() changed: EventEmitter<number> = new EventEmitter();
 
   constructor() { }
 
   ngOnInit(): void {
-    this.debouncer.pipe(debounceTime(200)).subscribe(x=> this.changed.next(x));
+    this.debouncer.pipe(debounceTime(200)).subscribe(x => this.changed.next(x));
   }
 
-  handleDragging(e: DragEvent) {
+  handleDragging(e: DragEvent | TouchEvent) {
     const trackRect = this.slidertrack.nativeElement.getBoundingClientRect();
-    let y = e.clientY;
-    if(y < trackRect.top){
+    const position = this.getPosition(e);
+    let y = position.y;
+    if (y < trackRect.top) {
       y = trackRect.top;
-    }else if (y > trackRect.bottom){
+    } else if (y > trackRect.bottom) {
       y = trackRect.bottom;
     }
     const fromTop = y - trackRect.top;
@@ -39,12 +40,27 @@ export class VerticalSliderComponent implements OnInit {
     this.debouncer.next(this.value);
   }
 
-  handleDragEnd(e: DragEvent){
+  private getPosition(mouseEvent: DragEvent | TouchEvent) {
+    let x: number, y: number;
+    if (mouseEvent instanceof DragEvent) {
+      x = mouseEvent.clientX;
+      y = mouseEvent.clientY;
+    } else if (mouseEvent instanceof TouchEvent) {
+      if (mouseEvent.touches.length) {
+        x = mouseEvent.touches[0].clientX;
+        y = mouseEvent.touches[0].clientY;
+      }
+    }
+    return { x, y };
+  }
+
+  handleDragEnd(e: DragEvent | TouchEvent) {
+    const position = this.getPosition(e);
     const trackRect = this.slidertrack.nativeElement.getBoundingClientRect();
-    let y = e.clientY;
-    if(y < trackRect.top){
+    let y = position.y;
+    if (y < trackRect.top) {
       y = trackRect.top;
-    }else if (y > trackRect.bottom){
+    } else if (y > trackRect.bottom) {
       y = trackRect.bottom;
     }
     const fromTop = y - trackRect.top;
@@ -53,9 +69,12 @@ export class VerticalSliderComponent implements OnInit {
     this.debouncer.next(this.value);
   }
 
-  handleDragStart(e: DragEvent) {
-    this.dragStartY = e.clientY;
-    e.dataTransfer.setDragImage(new Image(), 0, 0);
+  handleDragStart(e: DragEvent | TouchEvent) {
+    const position = this.getPosition(e);
+    this.dragStartY = position.y;
+    if (e instanceof DragEvent) {
+      e.dataTransfer.setDragImage(new Image(), 0, 0);
+    }
   }
 
 }

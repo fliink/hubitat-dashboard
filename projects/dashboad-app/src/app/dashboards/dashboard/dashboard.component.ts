@@ -129,7 +129,6 @@ export class DashboardComponent implements OnInit {
   }
 
   dragStart(dragEvent: MouseEvent | TouchEvent, tile: { row: number, column: number }): void {
-    console.log('dragStart');
     const thing = document.createElement('DIV');
     thing.innerHTML = '';
     thing.classList.add('tile');
@@ -145,8 +144,6 @@ export class DashboardComponent implements OnInit {
   }
 
   dragEnd(dragEvent: MouseEvent | TouchEvent, tile: { row: number, column: number }): void {
-    console.log('dragEnd');
-
     const gridColumn = Math.min(this.activeTemplateTile!.start.column, this.activeTemplateTile!.end!.column);
     const gridRow = Math.min(this.activeTemplateTile!.start.row, this.activeTemplateTile!.end!.row);
     const gridColumnEnd = Math.max(this.activeTemplateTile!.start.column + 1, this.activeTemplateTile!.end!.column + 1);

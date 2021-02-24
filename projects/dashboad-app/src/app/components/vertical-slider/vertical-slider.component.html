@@ -3,5 +3,10 @@
 
     </div>
     <div class="slider-handle" draggable="true" [ngStyle]="{bottom: 'calc(' + value + '% - 5px)'}"
-        (dragstart)="handleDragStart($event)" (dragend)="handleDragEnd($event)" (drag)="handleDragging($event)" #sliderhandle></div>
+        (dragstart)="handleDragStart($event)" 
+        (touchstart)="handleDragStart($event)" 
+        (dragend)="handleDragEnd($event)" 
+        (touchend)="handleDragEnd($event)" 
+        (touchmove)="handleDragging($event)" 
+        (drag)="handleDragging($event)" #sliderhandle></div>
 </div>
