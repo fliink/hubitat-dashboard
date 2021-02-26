@@ -15,7 +15,6 @@ export class ThermostatTileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('thermostat', this.device);
   }
 
   adjustTemperature(amount){

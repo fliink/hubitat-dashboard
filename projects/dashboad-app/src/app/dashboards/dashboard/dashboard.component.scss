@@ -35,7 +35,8 @@
 
 .editor{
     position: fixed;
-    width: 450px;
+    width: 100%;
+    max-width: 450px;
     right: 0px;
     height: 100%;
     background-color: blue;
@@ -45,6 +46,10 @@
 
     &.closed{
         right: -450px;
+    }
+
+    button {
+        padding: 16px;
     }
 }
 

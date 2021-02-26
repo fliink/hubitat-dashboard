@@ -17,7 +17,6 @@ export class DropListComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log('items', this.items);
   }
 
   selectItem(item: any){

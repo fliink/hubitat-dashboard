@@ -58,10 +58,10 @@ export class VerticalSliderComponent implements OnInit {
     const position = this.getPosition(e);
     const trackRect = this.slidertrack.nativeElement.getBoundingClientRect();
     let y = position.y;
-    if (y < trackRect.top) {
-      y = trackRect.top;
-    } else if (y > trackRect.bottom) {
-      y = trackRect.bottom;
+    if (y < trackRect.top + 5) {
+      y = trackRect.top + 5;
+    } else if (y > trackRect.bottom - 5) {
+      y = trackRect.bottom - 5;
     }
     const fromTop = y - trackRect.top;
     const percent = (trackRect.height - fromTop) / trackRect.height;

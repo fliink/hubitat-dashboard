@@ -9,4 +9,10 @@
 .tile{
     height: calc(100% - 16px);
     padding: 8px;
+
+    .tile-title{
+        font-size: 12px;
+        white-space: nowrap;
+        margin-bottom: 3px;
+    }
 }

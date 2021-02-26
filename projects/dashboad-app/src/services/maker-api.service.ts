@@ -19,7 +19,6 @@ export class MakerApiService {
         this._devices = {};
         this.socket.on('message', (x: { deviceId: string, value: any, name: string }) => {
             this._devices[x.deviceId].attributes[x.name] = x.value;
-            console.log('message!!', x);
         });
         this.init();
 
@@ -48,8 +47,6 @@ export class MakerApiService {
                 a[b.id] = b;
                 return a;
             }, {});
-
-            console.log('_devices', this._devices);
 
             this._deviceArray.next(Object.values(this._devices));
         }));

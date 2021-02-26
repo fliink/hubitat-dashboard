@@ -18,6 +18,8 @@ import { VerticalSliderComponent } from './components/vertical-slider/vertical-s
 import { SensorTileComponent } from './components/tiles/sensor-tile/sensor-tile.component';
 import { ThermostatTileComponent } from './components/tiles/thermostat-tile/thermostat-tile.component';
 import { ButtonSliderComponent } from './components/button-slider/button-slider.component';
+import { HighlightDirective } from './directives/drag-start.directive';
+import { DragService } from './directives/drag-start.service';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,8 @@ import { ButtonSliderComponent } from './components/button-slider/button-slider.
     VerticalSliderComponent,
     SensorTileComponent,
     ThermostatTileComponent,
-    ButtonSliderComponent
+    ButtonSliderComponent,
+    HighlightDirective
   ],
   imports: [
     BrowserModule,
@@ -41,7 +44,7 @@ import { ButtonSliderComponent } from './components/button-slider/button-slider.
     FormsModule,
     SocketIoModule.forRoot({ url: 'http://localhost:8080', options: { } })
   ],
-  providers: [MakerApiService],
+  providers: [MakerApiService, DragService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
