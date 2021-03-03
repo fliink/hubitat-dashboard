@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { DashboardTile } from 'projects/models/src/lib/dashboard-api/dashboard';
 
 @Component({
@@ -13,6 +13,7 @@ export class TileComponent implements OnInit {
   @HostBinding('style.gridColumnEnd') gridColumnEnd: string = '';
   
   @Input() config: DashboardTile = undefined;
+  @Output() activated: EventEmitter<boolean> = new EventEmitter();
 
   constructor() { 
    
@@ -23,6 +24,10 @@ export class TileComponent implements OnInit {
     this.gridRow = `${this.config.position.top}`;
     this.gridRowEnd = `${this.config.position.bottom}`;
     this.gridColumnEnd = `${this.config.position.right}`;
+  }
+
+  activate(){
+    this.activated.next(true);
   }
 
 }

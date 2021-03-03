@@ -1,34 +1,28 @@
 <div class="page-wrapper" fxLayout="column">
     <div>
-        <input #dashboardname [value]="dashboard.name" placeholder="Dashboard Name">
-        <input #dashboardname [value]="dashboard.width" placeholder="Dashboard Width">
-        <input #dashboardname [value]="dashboard.height" placeholder="Dashboard Height">
-        <button (click)="toggleEdit()">Edit Mode</button>
-        <button (click)="save()">Save</button>
+        <div>{{dashboard.name}} <button (click)="settings = true">Edit</button></div>
     </div>
     <div fxFlex="1 0" class="grid-wrapper">
         <div class="grid grid-template"
-        *ngIf="editorMode"
-            [ngStyle]="{'grid-template-columns': 'repeat(8, minmax(0, 1fr))', 'grid-template-rows': 'repeat(8, minmax(0, 1fr))'}">
-            <div class="tile" *ngFor="let tile of gridCells" 
-                h-events 
-                (hDragStart)="dragStart($event, tile)" 
-                (hDragEnter)="dragEnter($event, tile)" 
-                (hDragEnd)="dragEnd($event, tile)" 
-                [attr.data-tile-row]="tile.row"
-                [attr.data-tile-column]="tile.column">
-                {{tile.row}}:{{tile.column}}</div>
-        </div>
-        <div #grideditor class="grid grid-tiles" [ngClass]="{'edit-mode': editorMode}" 
-            [ngStyle]="{'grid-template-columns': 'repeat(8, minmax(0, 1fr))', 'grid-template-rows': 'repeat(8, minmax(0, 1fr))'}">
-            <app-tile *ngFor="let tile of tiles" [config]="tile"></app-tile>
+            [ngStyle]="{'grid-template-columns': 'repeat(' + dashboard.width + ', minmax(0, 1fr))', 'grid-template-rows': 'repeat(' + dashboard.height + ', minmax(0, 1fr))'}"
+            #grideditor>
+            <ng-container *ngIf="editorMode">
+                <div class="tile" *ngFor="let tile of gridCells" h-events (hDragStart)="dragStart($event, tile)"
+                    (hDragEnter)="dragEnter($event, tile)" (hDragEnd)="dragEnd($event, tile)" [style.gridRow]="tile.row"
+                    [style.gridColumn]="tile.column" [attr.data-tile-row]="tile.row"
+                    [attr.data-tile-column]="tile.column">
+                    {{tile.row}}:{{tile.column}}</div>
+            </ng-container>
+            <app-tile *ngFor="let tile of tiles" [config]="tile" (activated)="activateTile(tile)"></app-tile>
         </div>
     </div>
-    <div class="editor" [ngClass]="{closed: !editorActive || !editorMode}">
-        <input #tiletitle [value]="activeTile?.name" (input)="activeTile.name = $event.target['value']" placeholder="Title">
+    <div class="editor" [ngClass]="{closed: !activeTile}">
+        <input #tiletitle [value]="activeTile?.name" (input)="activeTile.name = $event.target['value']"
+            placeholder="Title">
 
         <div>
-            <app-drop-list label="Select Device" [items]="devices$ | async" [selectedItem]="selectedDevice" (changed)="selectDevice($event)">
+            <app-drop-list label="Select Device" [items]="devices$ | async" [selectedItem]="selectedDevice"
+                (changed)="selectDevice($event)">
                 <ng-template #itemTemplate let-item>
                     {{item?.label}}
                 </ng-template>
@@ -48,7 +42,25 @@
                 </ng-template>
             </app-drop-list>
         </div>
-        <button (click)="editorActive = false">Done</button>
+        <button (click)="closePane()">Done</button>
+        <button (click)="deleteTile(activeTile)">Delete</button>
 
+    </div>
+
+    <div class="editor" [ngClass]="{closed: !settings}">
+        <input #dashboardname [value]="dashboard.name" placeholder="Dashboard Name">
+        <div class="step-editor">
+            <button (click)="changeWidth(-1)">-</button>
+            <div>{{dashboard.width}}</div>
+            <button (click)="changeWidth(1)">+</button>
+        </div>
+        <div class="step-editor">
+            <button (click)="changeHeight(-1)">-</button>
+            <div>{{dashboard.height}}</div>
+            <button (click)="changeHeight(1)">+</button>
+        </div>
+        <input #dashboardname [value]="dashboard.height" placeholder="Dashboard Height">
+        <button (click)="toggleEdit()"></button>
+        <button (click)="settings = false">Done</button>
     </div>
 </div>

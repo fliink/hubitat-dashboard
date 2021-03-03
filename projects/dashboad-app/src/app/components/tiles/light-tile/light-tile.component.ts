@@ -34,6 +34,7 @@ export class LightTileComponent implements OnInit, OnChanges {
   }
 
   setLevel(value: number): void {
+    console.log('setValue', value);
     this.hubitatService.sendCommand(this.device.id, { setLevel: Math.round(value) }).subscribe();
   }
 

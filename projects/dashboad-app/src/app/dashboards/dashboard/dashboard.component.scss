@@ -1,6 +1,7 @@
 :host{
     height: 100%;
     display: block;
+    user-select: none;
 }
 
 .page-wrapper{
@@ -55,4 +56,13 @@
 
 .device-list{
     background-color: white;
+}
+
+.step-editor{
+    display: flex;
+    flex-direction: row;
+
+    button{
+        height: 1rem;
+    }
 }

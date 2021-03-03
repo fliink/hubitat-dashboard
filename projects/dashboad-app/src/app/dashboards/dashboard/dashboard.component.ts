@@ -26,6 +26,7 @@ export class DashboardComponent implements OnInit {
   selectedCapability: string = '';
   deviceListVisible: boolean = false;
   capabilityListVisible: boolean = false;
+  settings: boolean = false;
 
   tiles: DashboardTile[] = [];
   activeTile: DashboardTile = undefined;
@@ -134,7 +135,34 @@ export class DashboardComponent implements OnInit {
     this.capabilityListVisible = value;
   }
 
-  ds(e){
+  activateTile(tile: DashboardTile) {
+    if (this.activeTile === tile) {
+      this.closePane();
+    } else {
+      this.activeTile = tile;
+      this.selectedDevice = tile.device;
+    }
+  }
+
+  deleteTile(tile: DashboardTile) {
+    const tileIndex = this.tiles.indexOf(tile);
+    this.tiles.splice(tileIndex, 1);
+    this.closePane();
+  }
+
+  closePane() {
+    this.activeTile = undefined;
+    this.selectedDevice = undefined;
+    this.settings = false;
+    this.save();
+  }
+
+  changeWidth(amount: number){
+    this.dashboard.width += amount;
+  }
+
+  changeHeight(amount: number){
+    this.dashboard.height += amount;
   }
 
 }

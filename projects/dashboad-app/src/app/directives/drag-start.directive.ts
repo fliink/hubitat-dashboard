@@ -2,7 +2,7 @@ import { Directive, ElementRef, EventEmitter, OnDestroy, Output } from '@angular
 import { element } from 'protractor';
 import { Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { DragPosition } from '../models/position';
+import { DragPosition, DragPositionEvent } from '../models/position';
 import { DragService } from './drag-start.service';
 
 @Directive({
@@ -15,16 +15,16 @@ export class HighlightDirective implements OnDestroy {
     private timerSubscription: Subscription;
 
     @Output() hDragStart: EventEmitter<DragPosition> = new EventEmitter();
-    @Output() hDragMove: EventEmitter<DragPosition> = new EventEmitter();
-    @Output() hDragEnter: EventEmitter<DragPosition> = new EventEmitter();
-    @Output() hDragEnd: EventEmitter<DragPosition> = new EventEmitter();
+    @Output() hDragMove: EventEmitter<DragPositionEvent> = new EventEmitter();
+    @Output() hDragEnter: EventEmitter<DragPositionEvent> = new EventEmitter();
+    @Output() hDragEnd: EventEmitter<DragPositionEvent> = new EventEmitter();
     @Output() hHold: EventEmitter<DragPosition> = new EventEmitter();
 
     constructor(el: ElementRef<Element>, private dragService: DragService) {
         el.nativeElement.addEventListener('mousedown', this.start.bind(this));
         el.nativeElement.addEventListener('touchstart', this.start.bind(this));
-        el.nativeElement.addEventListener('mousemove', this.move.bind(this));
-        el.nativeElement.addEventListener('touchmove', this.move.bind(this));
+        //el.nativeElement.addEventListener('mousemove', this.move.bind(this));
+        //el.nativeElement.addEventListener('touchmove', this.move.bind(this));
         el.nativeElement.addEventListener('mouseup', this.end.bind(this));
         el.nativeElement.addEventListener('touchend', this.end.bind(this));
         el.nativeElement.addEventListener('myly', this.move.bind(this));
@@ -36,8 +36,6 @@ export class HighlightDirective implements OnDestroy {
         this.element.removeEventListener('touchstart', this.start);
         this.element.removeEventListener('mousemove', this.move);
         this.element.removeEventListener('touchmove', this.move);
-        this.element.removeEventListener('mouseup', this.end);
-        this.element.removeEventListener('touchend', this.end);
     }
 
     private start(e: MouseEvent | TouchEvent) {
@@ -51,13 +49,16 @@ export class HighlightDirective implements OnDestroy {
         this.timerSubscription = timer(1000, 1000).pipe(take(1)).subscribe(x => {
             if (!this.dragService.isDragging) {
                 this.hHold.next(this.origin);
-        console.log('dragsyaty')
-    }
+            }
         });
+
+        document.addEventListener('mousemove', this.move.bind(this));
+        document.addEventListener('touchmove', this.move.bind(this));
+        document.addEventListener('touchend', this.end.bind(this));
+        document.addEventListener('mouseup', this.end.bind(this));
     }
 
     private move(e: MouseEvent | TouchEvent | FauxTouchEvent) {
-
         let point: DragPosition;
         if (e instanceof MouseEvent) {
             point = new DragPosition(e.clientX, e.clientY);
@@ -67,6 +68,7 @@ export class HighlightDirective implements OnDestroy {
             point = new DragPosition(e.touches[0].clientX, e.touches[0].clientY);
         }
 
+        const dragEvent = new DragPositionEvent(point, this.origin);
         if (this.dragService.isDragging) {
             const overElement = document.elementFromPoint(point.x, point.y);
             if (e instanceof TouchEvent) {
@@ -75,20 +77,24 @@ export class HighlightDirective implements OnDestroy {
                 overElement.dispatchEvent(newEvent);
             } else if (e instanceof MouseEvent || e instanceof FauxTouchEvent) {
                 if (!this.dragService.dragMove(overElement)) {
-                    this.hDragEnter.next(point);
+                    this.hDragEnter.next(dragEvent);
                 }
             }
-            this.hDragMove.next(point);
+            this.hDragMove.next(dragEvent);
         } else if (this.origin) {
             const distance = this.origin.distance(point);
             if (distance > 2) {
                 this.dragService.dragStart();
-                this.hDragStart.next(point);
+                this.hDragStart.next(dragEvent);
             }
         }
     }
 
     private end(e: MouseEvent | TouchEvent) {
+        document.removeEventListener('mousemove', this.move);
+        document.removeEventListener('touchmove', this.move);
+        document.removeEventListener('touchend', this.end);
+        document.removeEventListener('mouseup', this.end);
         let point: DragPosition;
         if (e instanceof MouseEvent) {
             point = new DragPosition(e.clientX, e.clientY);
@@ -98,12 +104,13 @@ export class HighlightDirective implements OnDestroy {
 
         if (this.dragService.isDragging) {
             this.dragService.dragEnd();
-            this.hDragEnd.next(point);
+            const dragEvent = new DragPositionEvent(point, this.origin);
+            this.hDragEnd.next(dragEvent);
         }
 
         this.origin = undefined;
 
-        if (!this.timerSubscription.closed) {
+        if (!this.timerSubscription?.closed === false) {
             this.timerSubscription.unsubscribe();
         }
     }

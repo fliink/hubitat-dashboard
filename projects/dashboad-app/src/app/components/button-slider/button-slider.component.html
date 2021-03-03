@@ -1,3 +1,11 @@
-<div class="slider-handle" draggable="true" (dragstart)="handleDragStart($event)">
+<div class="slider-handle"
+h-events 
+(hDragStart)="handleDragStart($event)" 
+(hDragEnd)="handleDragEnd($event)" 
+(hDragMove)="handleDragMove($event)" >
 
+
+</div>
+<div class="slider-track" [ngClass]="{active: active}" [style.top]="trackAnchor" #track>
+    <div class="slider-thing" [style.bottom]="position" #thing></div>
 </div>

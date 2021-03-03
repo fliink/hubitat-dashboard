@@ -1,0 +1,15 @@
+[Unit]
+Description="Hubitat Service App"
+
+[Service]
+ExecStart=/usr/bin/node server.js
+WorkingDirectory=/var/www/express/hubitat
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=HubitatSvc
+Environment=NODE_ENV=production PORT=8080
+
+[Install]
+WantedBy=multi-user.target

@@ -1,5 +1,5 @@
 <div class="tile" *ngIf="config?.device" fxLayout="column">
-    <div fxFlex="0 1 0%" class="tile-title">{{config.name || config.device.label}}</div>
+    <button fxFlex="0 1 0%" class="tile-title" (click)="activate()">{{config.name || config.device.label}}</button>
     <div fxFlex="1 0 calc(100% - 8px)">
         <app-light-tile *ngIf="config.device.capabilityLookup.Light" [device]="config.device"></app-light-tile>
         <app-sensor-tile *ngIf="config.device.capabilityLookup.Sensor && !config.device.capabilityLookup.Thermostat"

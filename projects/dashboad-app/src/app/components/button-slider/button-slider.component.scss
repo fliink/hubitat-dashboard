@@ -1,5 +1,25 @@
 .slider-handle{
     height: 40px;
     width: 40px;
-    background-color: red;
+    background-color: grey;
+    border-radius: 50%;
+}
+
+.slider-track{
+    height: 200px;
+    width: 30px;
+    position: fixed;
+    background-color: blue;
+    display: none;
+
+    &.active {
+        display: block;
+    }
+
+    .slider-thing{
+        height: 20px;
+        width: 100%;
+        background-color: magenta;
+        position: absolute;
+    }
 }
