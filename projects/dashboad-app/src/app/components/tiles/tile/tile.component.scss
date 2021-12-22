@@ -1,9 +1,9 @@
 :host{
-    background-color: #333;
+    background-color: var(--control-background);
     display: block;
     margin: 5px;
     border-radius: 5px;
-    box-shadow: 0px 0px 5px lightgrey;
+    box-shadow: 0px 0px 5px rgba(0,0,0,.5);
 }
 
 .tile{
@@ -14,5 +14,9 @@
         font-size: 12px;
         white-space: nowrap;
         margin-bottom: 3px;
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 5px;
     }
 }

@@ -7,7 +7,7 @@
             [ngStyle]="{'grid-template-columns': 'repeat(' + dashboard.width + ', minmax(0, 1fr))', 'grid-template-rows': 'repeat(' + dashboard.height + ', minmax(0, 1fr))'}"
             #grideditor>
             <ng-container *ngIf="editorMode">
-                <div class="tile" *ngFor="let tile of gridCells" h-events (hDragStart)="dragStart($event, tile)"
+                <div class="tile" *ngFor="let tile of gridCells" h-events [hId]="tile.row + ':' + tile.column" (hDragStart)="dragStart($event, tile)"
                     (hDragEnter)="dragEnter($event, tile)" (hDragEnd)="dragEnd($event, tile)" [style.gridRow]="tile.row"
                     [style.gridColumn]="tile.column" [attr.data-tile-row]="tile.row"
                     [attr.data-tile-column]="tile.column">
@@ -41,6 +41,7 @@
                     {{item}}
                 </ng-template>
             </app-drop-list>
+
         </div>
         <button (click)="closePane()">Done</button>
         <button (click)="deleteTile(activeTile)">Delete</button>
@@ -60,7 +61,7 @@
             <button (click)="changeHeight(1)">+</button>
         </div>
         <input #dashboardname [value]="dashboard.height" placeholder="Dashboard Height">
-        <button (click)="toggleEdit()"></button>
+        <button (click)="toggleEdit()">Edit</button>
         <button (click)="settings = false">Done</button>
     </div>
 </div>

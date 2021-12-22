@@ -20,7 +20,9 @@ export class ButtonSliderComponent implements OnInit {
   @Input() minimum: number = 50;
   @Input() maximum: number = 100;
   @Input() value: number = 60;
+  @Input() on: boolean = false;
   @Output() changed: EventEmitter<number> = new EventEmitter();
+  @Output() toggle: EventEmitter<boolean> = new EventEmitter();
 
   position: string;
   trackAnchor: string;
@@ -29,13 +31,17 @@ export class ButtonSliderComponent implements OnInit {
 
   ngOnInit(): void {
     this.debouncer.pipe(debounceTime(50)).subscribe(x => {
-      console.log('gp');
       this.changed.next(x);
     });
   }
 
   handleDragStart($event: DragPosition) {
     this.active = true;
+  }
+
+  handleClick($event){
+    this.on = !this.on;
+    this.toggle.next(!this.on);
   }
 
   handleDragEnd($event: DragPosition) {

@@ -20,6 +20,8 @@ import { ThermostatTileComponent } from './components/tiles/thermostat-tile/ther
 import { ButtonSliderComponent } from './components/button-slider/button-slider.component';
 import { HighlightDirective } from './directives/drag-start.directive';
 import { DragService } from './directives/drag-start.service';
+import { HCanvasComponent } from './components/h-canvas/h-canvas.component';
+import { ColorSliderComponent } from './components/color-slider/color-slider.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,9 @@ import { DragService } from './directives/drag-start.service';
     SensorTileComponent,
     ThermostatTileComponent,
     ButtonSliderComponent,
-    HighlightDirective
+    ColorSliderComponent,
+    HighlightDirective,
+    HCanvasComponent
   ],
   imports: [
     BrowserModule,

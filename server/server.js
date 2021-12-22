@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/deviceUpdates", (req, res) => {
-  // console.log({ body: req.body.content });
+  console.log({ body: req.body.content });
   console.log('Device Updated');
   io.emit('message', req.body.content);
 });

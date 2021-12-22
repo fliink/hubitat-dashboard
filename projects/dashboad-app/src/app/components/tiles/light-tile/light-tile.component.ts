@@ -1,6 +1,8 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MakerApiService } from 'projects/dashboad-app/src/services/maker-api.service';
 import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
+import { take } from 'rxjs/operators';
+import { Hsl } from '../../color-slider/color-slider.component';
 
 @Component({
   selector: 'app-light-tile',
@@ -30,12 +32,21 @@ export class LightTileComponent implements OnInit, OnChanges {
   }
 
   setEffect(id: number): void {
-    this.hubitatService.sendCommand(this.device.id, { on: '', setEffect: id }).subscribe();
+    this.hubitatService.sendCommand(this.device.id, { on: '', setEffect: id }).pipe(take(1)).subscribe();
   }
 
   setLevel(value: number): void {
-    console.log('setValue', value);
-    this.hubitatService.sendCommand(this.device.id, { setLevel: Math.round(value) }).subscribe();
+    this.hubitatService.sendCommand(this.device.id, { setLevel: Math.round(value) }).pipe(take(1)).subscribe();
+  }
+
+  toggleSwitch($event: boolean){
+    this.hubitatService.sendCommand(this.device.id, $event ? 'on' : 'off').pipe(take(1)).subscribe();
+  }
+
+  setHsl(value: Hsl){
+    this.device.attributes.hue = value.hue;
+    this.device.attributes.saturation = 100 - Math.round(value.saturation);
+    this.hubitatService.sendCommand(this.device.id, { setSaturation: 100 - Math.round(value.saturation), setHue: Math.round(value.hue) }).pipe(take(1)).subscribe();
   }
 
 }

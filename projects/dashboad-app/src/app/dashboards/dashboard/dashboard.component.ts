@@ -6,6 +6,12 @@ import { Observable } from 'rxjs';
 import { skipWhile, take } from 'rxjs/operators';
 import { DragPosition } from '../../models/position';
 
+
+export interface DashboardSaveState {
+  tiles?: DashboardTile[];
+  dashboard?: Dashboard;
+}
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -40,11 +46,13 @@ export class DashboardComponent implements OnInit {
     this.devices$.pipe(skipWhile(x => !x.length), take(1)).subscribe(devices => {
       const savedDashboardString = localStorage.getItem('dashboard');
       if (savedDashboardString) {
-        const savedDashboard = JSON.parse(savedDashboardString) as DashboardTile[];
-        savedDashboard.forEach(t => {
+        const savedDashboard = JSON.parse(savedDashboardString) as DashboardSaveState;
+        savedDashboard.tiles?.forEach(t => {
           t.device = devices.find(d => d.id === t.device.id);
           this.tiles.push(t);
         });
+
+        this.dashboard = savedDashboard.dashboard;
       }
     });
   }
@@ -54,7 +62,11 @@ export class DashboardComponent implements OnInit {
   }
 
   save() {
-    localStorage.setItem('dashboard', JSON.stringify(this.tiles));
+    const saveState = {
+      dashboard: this.dashboard,
+      tiles: this.tiles
+    }
+    localStorage.setItem('dashboard', JSON.stringify(saveState));
   }
 
   ngOnInit(): void {
@@ -139,6 +151,7 @@ export class DashboardComponent implements OnInit {
     if (this.activeTile === tile) {
       this.closePane();
     } else {
+      console.log(tile);
       this.activeTile = tile;
       this.selectedDevice = tile.device;
     }
@@ -159,10 +172,28 @@ export class DashboardComponent implements OnInit {
 
   changeWidth(amount: number){
     this.dashboard.width += amount;
+    this.gridCells = [];
+    for (let i = 1; i <= this.dashboard.height; i++) {
+      for (let j = 1; j <= this.dashboard.width; j++) {
+        this.gridCells.push({
+          row: i,
+          column: j
+        });
+      }
+    }
   }
 
   changeHeight(amount: number){
     this.dashboard.height += amount;
+    this.gridCells = [];
+    for (let i = 1; i <= this.dashboard.height; i++) {
+      for (let j = 1; j <= this.dashboard.width; j++) {
+        this.gridCells.push({
+          row: i,
+          column: j
+        });
+      }
+    }
   }
 
 }

@@ -1,0 +1,12 @@
+<div class="slider-handle"
+h-events 
+(hDragStart)="handleDragStart($event)" 
+(hDragEnd)="handleDragEnd($event)" 
+(hDragMove)="handleDragMove($event)" [style.backgroundColor]="cssValue">
+
+
+</div>
+<div class="slider-track" [ngClass]="{active: active}" [style.top]="trackAnchor" #track>
+    <div class="lightness-gradient"></div>
+    <div class="slider-thing" [style.bottom]="position?.bottom" [style.left]="position?.left" [style.backgroundColor]="cssValue" #thing></div>
+</div>

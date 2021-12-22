@@ -1,8 +1,16 @@
 <div *ngIf="device" style="position: relative; height: 100%;" [ngStyle]="{'background-color': rgb}" fxLayout="column">
-    <app-drop-list *ngIf="device.capabilityLookup.LightEffects" [items]="device?.attributes?.lightEffects | keyvalue" [selectedItem]="selectedEffect" (changed)="setEffect($event?.key)" label="Select Effect">
+    <app-drop-list *ngIf="device.capabilityLookup.LightEffects" [items]="device?.attributes?.lightEffects | keyvalue"
+        [selectedItem]="selectedEffect" (changed)="setEffect($event?.key)" label="Select Effect">
         <ng-template #itemTemplate let-item>
             {{item?.value}}
         </ng-template>
     </app-drop-list>
-    <app-button-slider *ngIf="device.capabilityLookup.SwitchLevel" [minimum]="0" [maximum]="100" (changed)="setLevel($event)" [value]="device.attributes?.level"></app-button-slider>
+    <div fxLayout="row" class="light-controls">
+        <app-button-slider *ngIf="device.capabilityLookup.SwitchLevel" [minimum]="0" [maximum]="100"
+            (changed)="setLevel($event)" [value]="device.attributes?.level" [on]="device.attributes?.switch === 'on'" (toggle)="toggleSwitch($event)"></app-button-slider>
+        <app-color-slider *ngIf="device.capabilityLookup.SwitchLevel" [minimum]="0" [maximum]="100"
+            (changed)="setHsl($event)"
+            [value]="{lightness: device.attributes?.level, saturation: device.attributes?.saturation, hue: device.attributes?.hue}">
+        </app-color-slider>
+    </div>
 </div>

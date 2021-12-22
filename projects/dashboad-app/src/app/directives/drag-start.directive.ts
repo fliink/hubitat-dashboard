@@ -1,4 +1,4 @@
-import { Directive, ElementRef, EventEmitter, OnDestroy, Output } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { element } from 'protractor';
 import { Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -14,29 +14,49 @@ export class HighlightDirective implements OnDestroy {
     private element: Element;
     private timerSubscription: Subscription;
 
+    private startEventFn: any;
+    private enterEventFn: any;
+    private moveEventFn: any;
+    private endEventFn: any;
+    private clickEventFn: any;
+    
+
+    @Input() hId: string = '';
+
     @Output() hDragStart: EventEmitter<DragPosition> = new EventEmitter();
     @Output() hDragMove: EventEmitter<DragPositionEvent> = new EventEmitter();
     @Output() hDragEnter: EventEmitter<DragPositionEvent> = new EventEmitter();
     @Output() hDragEnd: EventEmitter<DragPositionEvent> = new EventEmitter();
     @Output() hHold: EventEmitter<DragPosition> = new EventEmitter();
+    @Output() hNewPoint: EventEmitter<DragPosition[]> = new EventEmitter();
+    @Output() hClick: EventEmitter<MouseEvent | TouchEvent> = new EventEmitter();
 
     constructor(el: ElementRef<Element>, private dragService: DragService) {
-        el.nativeElement.addEventListener('mousedown', this.start.bind(this));
-        el.nativeElement.addEventListener('touchstart', this.start.bind(this));
-        //el.nativeElement.addEventListener('mousemove', this.move.bind(this));
-        //el.nativeElement.addEventListener('touchmove', this.move.bind(this));
-        el.nativeElement.addEventListener('mouseup', this.end.bind(this));
-        el.nativeElement.addEventListener('touchend', this.end.bind(this));
-        el.nativeElement.addEventListener('myly', this.move.bind(this));
+        this.startEventFn = this.start.bind(this);
+        this.clickEventFn = this.click.bind(this);
+        this.enterEventFn = this.enter.bind(this);
+        this.moveEventFn = this.move.bind(this);
+        this.endEventFn = this.end.bind(this);
+
+        el.nativeElement.addEventListener('mousedown', this.startEventFn);
+        el.nativeElement.addEventListener('touchstart', this.startEventFn);
+        // el.nativeElement.addEventListener('mousemove', this.move.bind(this));
+        // el.nativeElement.addEventListener('touchmove', this.move.bind(this));
+        // el.nativeElement.addEventListener('mouseup', this.end.bind(this));
+        // el.nativeElement.addEventListener('touchend', this.end.bind(this));
+
+        el.nativeElement.addEventListener('hEnter', this.enterEventFn);
+        el.nativeElement.addEventListener('click', this.clickEventFn);
 
         this.element = el.nativeElement;
     }
     ngOnDestroy(): void {
-        this.element.removeEventListener('mousedown', this.start);
-        this.element.removeEventListener('touchstart', this.start);
-        this.element.removeEventListener('mousemove', this.move);
-        this.element.removeEventListener('touchmove', this.move);
+        this.element.removeEventListener('mousedown', this.startEventFn);
+        this.element.removeEventListener('touchstart', this.startEventFn);
+        // this.element.removeEventListener('mousemove', this.move);
+        // this.element.removeEventListener('touchmove', this.move);
     }
+
 
     private start(e: MouseEvent | TouchEvent) {
 
@@ -52,10 +72,11 @@ export class HighlightDirective implements OnDestroy {
             }
         });
 
-        document.addEventListener('mousemove', this.move.bind(this));
-        document.addEventListener('touchmove', this.move.bind(this));
-        document.addEventListener('touchend', this.end.bind(this));
-        document.addEventListener('mouseup', this.end.bind(this));
+        document.addEventListener('mousemove', this.moveEventFn);
+        document.addEventListener('touchmove', this.moveEventFn);
+
+        document.addEventListener('touchend', this.endEventFn);
+        document.addEventListener('mouseup', this.endEventFn);
     }
 
     private move(e: MouseEvent | TouchEvent | FauxTouchEvent) {
@@ -65,22 +86,24 @@ export class HighlightDirective implements OnDestroy {
         } else if (e instanceof TouchEvent) {
             point = new DragPosition(e.touches[0].clientX, e.touches[0].clientY);
         } else if (e instanceof FauxTouchEvent) {
-            point = new DragPosition(e.touches[0].clientX, e.touches[0].clientY);
+            point = new DragPosition(e.fauxX, e.fauxY);
         }
 
         const dragEvent = new DragPositionEvent(point, this.origin);
         if (this.dragService.isDragging) {
             const overElement = document.elementFromPoint(point.x, point.y);
+            const newEvent = new FauxTouchEvent('hEnter');
+
             if (e instanceof TouchEvent) {
-                const newEvent = new FauxTouchEvent('myly');
-                newEvent.touches = e.touches;
-                overElement.dispatchEvent(newEvent);
-            } else if (e instanceof MouseEvent || e instanceof FauxTouchEvent) {
-                if (!this.dragService.dragMove(overElement)) {
-                    this.hDragEnter.next(dragEvent);
-                }
+                newEvent.fauxX = e.touches[0].clientX;
+                newEvent.fauxY = e.touches[0].clientY;
+            } else if (e instanceof MouseEvent) {
+                newEvent.fauxX = e.clientX;
+                newEvent.fauxY = e.clientY;
             }
+            overElement.dispatchEvent(newEvent);
             this.hDragMove.next(dragEvent);
+
         } else if (this.origin) {
             const distance = this.origin.distance(point);
             if (distance > 2) {
@@ -90,11 +113,32 @@ export class HighlightDirective implements OnDestroy {
         }
     }
 
+    private enter(e: FauxTouchEvent) {
+        const dragEvent = new DragPositionEvent(new DragPosition(e.fauxX, e.fauxY), undefined);
+        if (!this.dragService.dragMove(<Element>e.target)) {
+            this.hDragEnter.next(dragEvent);
+        }
+    }
+
+
+    private click(e: MouseEvent | TouchEvent) {
+        if (this.dragService.isTracking) {
+            let point: DragPosition;
+            if (e instanceof MouseEvent) {
+                point = new DragPosition(e.clientX, e.clientY);
+            } else if (e instanceof TouchEvent) {
+                point = new DragPosition(e.touches[0].clientX, e.touches[0].clientY);
+            }
+
+            const clicks = this.dragService.trackClick(point);
+            this.hNewPoint.next(clicks);
+        }else{
+            this.hClick.next(e);
+        }
+    }
+
     private end(e: MouseEvent | TouchEvent) {
-        document.removeEventListener('mousemove', this.move);
-        document.removeEventListener('touchmove', this.move);
-        document.removeEventListener('touchend', this.end);
-        document.removeEventListener('mouseup', this.end);
+
         let point: DragPosition;
         if (e instanceof MouseEvent) {
             point = new DragPosition(e.clientX, e.clientY);
@@ -113,6 +157,11 @@ export class HighlightDirective implements OnDestroy {
         if (!this.timerSubscription?.closed === false) {
             this.timerSubscription.unsubscribe();
         }
+
+        document.removeEventListener('mousemove', this.moveEventFn);
+        document.removeEventListener('touchmove', this.moveEventFn);
+        document.removeEventListener('touchend', this.endEventFn);
+        document.removeEventListener('mouseup', this.endEventFn);
     }
 
 
@@ -127,5 +176,6 @@ export class HighlightDirective implements OnDestroy {
 }
 
 export class FauxTouchEvent extends Event {
-    touches: TouchList
+    fauxX: number;
+    fauxY: number;
 }

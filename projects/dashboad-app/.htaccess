@@ -1,0 +1,1 @@
+RewriteRule ^/hubitat.*$ /hubitat/index.html
