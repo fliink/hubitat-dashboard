@@ -40,7 +40,7 @@ export class LightTileComponent implements OnInit, OnChanges {
   }
 
   toggleSwitch($event: boolean){
-    this.hubitatService.sendCommand(this.device.id, $event ? 'on' : 'off').pipe(take(1)).subscribe();
+    this.hubitatService.sendCommand(this.device.id, $event ? 'off' : 'on').pipe(take(1)).subscribe();
   }
 
   setHsl(value: Hsl){

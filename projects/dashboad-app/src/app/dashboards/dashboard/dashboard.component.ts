@@ -2,7 +2,7 @@ import { Component, ComponentFactoryResolver, ElementRef, OnInit, ViewChild, Vie
 import { MakerApiService } from 'projects/dashboad-app/src/services/maker-api.service';
 import { Dashboard, DashboardTile } from 'projects/models/src/lib/dashboard-api/dashboard';
 import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { skipWhile, take } from 'rxjs/operators';
 import { DragPosition } from '../../models/position';
 
@@ -41,18 +41,22 @@ export class DashboardComponent implements OnInit {
   editorMode: boolean = false;
 
   constructor(private makerService: MakerApiService, private componentFactoryResolver: ComponentFactoryResolver, private vc: ViewContainerRef) {
-    this.devices$ = this.makerService.devices$;
+    this.devices$ = this.makerService.devices$.pipe(skipWhile(x => !x.length), take(1));
     this.makerService.loadDevices();
-    this.devices$.pipe(skipWhile(x => !x.length), take(1)).subscribe(devices => {
-      const savedDashboardString = localStorage.getItem('dashboard');
-      if (savedDashboardString) {
-        const savedDashboard = JSON.parse(savedDashboardString) as DashboardSaveState;
-        savedDashboard.tiles?.forEach(t => {
-          t.device = devices.find(d => d.id === t.device.id);
-          this.tiles.push(t);
-        });
+    forkJoin([this.makerService.load(), this.devices$]).pipe(take(1)).subscribe(([state, devices]) => {
+      state.tiles?.forEach(t => {
+        t.device = devices.find(d => d.id === t.device.id);
+        this.tiles.push(t);
+      });
+      this.dashboard = state.dashboard;
 
-        this.dashboard = savedDashboard.dashboard;
+      for (let i = 1; i <= this.dashboard.height; i++) {
+        for (let j = 1; j <= this.dashboard.width; j++) {
+          this.gridCells.push({
+            row: i,
+            column: j
+          });
+        }
       }
     });
   }
@@ -67,17 +71,11 @@ export class DashboardComponent implements OnInit {
       tiles: this.tiles
     }
     localStorage.setItem('dashboard', JSON.stringify(saveState));
+    this.makerService.save(saveState);
   }
 
   ngOnInit(): void {
-    for (let i = 1; i <= this.dashboard.height; i++) {
-      for (let j = 1; j <= this.dashboard.width; j++) {
-        this.gridCells.push({
-          row: i,
-          column: j
-        });
-      }
-    }
+   
   }
 
   originTile: { row: number, column: number };
@@ -133,6 +131,7 @@ export class DashboardComponent implements OnInit {
   selectDevice(device: HubitatDevice): void {
     this.selectedDevice = device;
     this.activeTile.device = this.selectedDevice;
+    this.activeTile.name = this.selectedDevice.label;
   }
 
   selectCapability(capability: string): void {
@@ -170,7 +169,7 @@ export class DashboardComponent implements OnInit {
     this.save();
   }
 
-  changeWidth(amount: number){
+  changeWidth(amount: number) {
     this.dashboard.width += amount;
     this.gridCells = [];
     for (let i = 1; i <= this.dashboard.height; i++) {
@@ -183,7 +182,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  changeHeight(amount: number){
+  changeHeight(amount: number) {
     this.dashboard.height += amount;
     this.gridCells = [];
     for (let i = 1; i <= this.dashboard.height; i++) {

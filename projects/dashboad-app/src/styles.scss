@@ -4,6 +4,8 @@
     --background-color: #222;
     --color: #efefef;
     --control-background: #333;
+    --button-background: #444;
+    --menu-background: var(--background-color);
 }
 
 html, body, app-root{
@@ -20,4 +22,13 @@ html{
 
 app-root{
     display: block;
+}
+
+button {
+    background-color: var(--button-background);
+    border-radius: 3px;
+    color: var(--color);
+    border: solid 1px var(--background-color);
+    height: 2em;
+    line-height: 0px;
 }

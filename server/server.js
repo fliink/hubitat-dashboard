@@ -1,13 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors = require("cors");
 const request = require("request");
-const MongoClient = require('mongodb').MongoClient
+const { networkInterfaces } = require('os');
+const db = require('./db');
+const dashboards = require("./services/dashboards.service");
 
 
 const app = express();
 
-const apiHost = 'http://192.168.1.2/apps/api/45';
+const apiHost = 'http://192.168.1.99/apps/api/45';
 const apiKey = '?access_token=bbfc30d1-f4cc-4ace-a5a0-20a492d0eaa1';
 let devices = [];
 
@@ -22,9 +23,27 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
 });
 
+app.get("/register", (req, res) => {
+  const nets = networkInterfaces();
+  let results;
+
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+    const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+      if (net.family === familyV4Value && !net.internal) {
+        results = encodeURIComponent(`http://${net.address}:8080/deviceUpdates`);
+      }
+    }
+  }
+  const uri = `${apiHost}/postURL/${results}${apiKey}`
+  request({ uri }, (error, response, body) => {
+    res.jsonp({ result: uri});
+  });
+});
+
 app.post("/deviceUpdates", (req, res) => {
-  console.log({ body: req.body.content });
-  console.log('Device Updated');
+  const d = req.body.content;
+  log(`Device updated - ${d.displayName} ${d.name} ${d.value}`);
   io.emit('message', req.body.content);
 });
 
@@ -36,8 +55,22 @@ function corsStuff(req, res, next) {
   next();
 }
 
+function log(message){
+  console.log(`${new Date().toISOString()}: ${message}`);
+}
+
 app.use(corsStuff);
 
+
+app.post('/save', (req, res)=>{
+  console.log(req.body);
+  db.save(req.body);
+  res.jsonp({ status: 'ok'});
+});
+
+app.get('/load', (req, res)=>{
+  res.jsonp(db.load());
+});
 
 
 app.get("/devices", (req, res) => {
@@ -56,11 +89,11 @@ app.get("/sendCommand", (req, res) => {
   const value = req.query['value'];
 
   let uri = `${apiHost}/devices/${deviceId}/${command}`;
-  if(value){
+  if (value) {
     uri = `${uri}/${value}`
   }
   uri = `${uri}${apiKey}`;
-  console.log(uri);
+
   request({ uri }, (error, response, body) => {
     const result = JSON.parse(body);
     devices = result;
@@ -68,11 +101,21 @@ app.get("/sendCommand", (req, res) => {
   });
 });
 
-const server = app.listen(8080, ()=>{
-  console.log('Hubitat Express Server Started.');
+dashboards.register(app);
+
+const server = app.listen(8080, () => {
+ log('Hubitat Express Server Started.');
+  db.start();
 });
 
-var io = require('socket.io')(server);
+var io = require('socket.io')(server, {
+  allowEIO3: true,
+  credentials: true,
+  cors: {
+    origin: "http://192.168.1.55",
+    methods: ["GET", "POST"]
+  }
+});
 
 
 

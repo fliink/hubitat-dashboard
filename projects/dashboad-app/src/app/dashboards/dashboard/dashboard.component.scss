@@ -34,13 +34,32 @@
     }
 }
 
+.menu-mask {
+    background-color: #000;
+    opacity: .3;
+    display: none;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 101;
+    &.show{
+        display: block;
+    }
+}
+
 .editor{
+    z-index: 102;
     position: fixed;
     width: 100%;
     max-width: 450px;
+    @media screen and (max-width: 600px){
+        max-width: 80%;
+    }
     right: 0px;
     height: 100%;
-    background-color: blue;
+    background-color: var(--menu-background);
     transition: right .2s;
     display: flex;
     flex-direction: column;

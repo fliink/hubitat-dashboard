@@ -46,7 +46,7 @@ import { ColorSliderComponent } from './components/color-slider/color-slider.com
     FlexLayoutModule,
     HttpClientModule,
     FormsModule,
-    SocketIoModule.forRoot({ url: 'http://localhost:8080', options: { } })
+    SocketIoModule.forRoot({ url: 'http://192.168.1.55:8080', options: { } })
   ],
   providers: [MakerApiService, DragService],
   bootstrap: [AppComponent]

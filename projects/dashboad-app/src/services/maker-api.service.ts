@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
-import { delay, map, mergeMap, share } from 'rxjs/operators';
+import { delay, map, mergeMap, share, tap } from 'rxjs/operators';
 import { DeviceCapabilities, HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 import { Socket } from 'ngx-socket-io';
 import { environment } from '../environments/environment';
+import { url } from 'inspector';
 
 @Injectable()
 export class MakerApiService {
 
     private apiHost = environment.apiUrl;
-    private apiKey = '?access_token=bbfc30d1-f4cc-4ace-a5a0-20a492d0eaa1';
 
     private _devices: { [key: string]: HubitatDevice };
     private _deviceArray: BehaviorSubject<HubitatDevice[]> = new BehaviorSubject(<HubitatDevice[]>[]);
@@ -25,9 +25,20 @@ export class MakerApiService {
     }
 
     init() {
-        //http://192.168.1.156/apps/api/3845/postURL/[URL]?access_token=YOUR_ACCESS_TOKEN
-        const registerUrl = `http://192.168.1.2/apps/api/45/postURL/http%3A%2F%2F192.168.1.3%3A8080%2FdeviceUpdates${this.apiKey}`;
-        this.http.get(registerUrl).subscribe();
+        // const registerUrl = `${this.apiHost}/register`;
+        // this.http.get(registerUrl).subscribe();
+    }
+
+    save(data: any): void {
+        const saveUrl = `${this.apiHost}/save`;
+        this.http.post(saveUrl, JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } }).subscribe(x => {
+            console.log(x);
+        });
+    }
+
+    load(): Observable<{ dashboard: any, tiles: any[] }> {
+        const loadUrl = `${this.apiHost}/load`;
+        return this.http.get<{ dashboard: any, tiles: any[] }>(loadUrl);
     }
 
     loadDevices(): void {
@@ -52,14 +63,27 @@ export class MakerApiService {
         }));
     }
 
-    sendCommand(deviceId: string, commands: { [key: string]: any } | string) : Observable<HubitatDevice> | Observable<HubitatDevice[]> {
+    sendCommand(deviceId: string, commands: { [key: string]: any } | string): Observable<HubitatDevice | HubitatDevice[]> {
         if (typeof commands === 'string') {
-            return this.http.get<HubitatDevice>(`${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${commands}`);
+            return this.http.get<HubitatDevice>(`${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${commands}`).pipe(tap((r: HubitatDevice) => {
+                const device = r.attributes = r.attributes || {};
+                if (r.attributes.lightEffects) {
+                    r.attributes.lightEffects = JSON.parse(<string>r.attributes.lightEffects);
+                }
+                r.capabilityLookup = r.capabilities.reduce((a: DeviceCapabilities, b) => {
+                    a[b] = true;
+                    return a;
+                }, {});
+                this._devices[r.id] = r;
+                this._deviceArray.next(Object.values(this._devices));
+            }));
         }
         else {
             const requests = Object.keys(commands).map(command => {
                 const url: string = `${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${command}&value=${commands[command]}`;
-                return this.http.get<HubitatDevice>(`${url}`);
+                return this.http.get<HubitatDevice>(`${url}`).pipe(tap(r => {
+                    console.log(r);
+                }));
             });
             return forkJoin(requests);
         }

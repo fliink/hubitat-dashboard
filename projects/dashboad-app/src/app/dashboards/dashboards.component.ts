@@ -14,18 +14,7 @@ export class DashboardsComponent implements OnInit {
 
   constructor() {
     this.dashboards = [
-      {
-        id: 1,
-        height:8,
-        width: 8,
-        name: 'Home'
-      },
-      {
-        id: 2,
-        height:8,
-        width: 8,
-        name: 'Office'
-      }
+      
     ];
 
     this.dashboards$ = of(this.dashboards);
@@ -35,7 +24,7 @@ export class DashboardsComponent implements OnInit {
     this.dashboards.push({
       id: 3,
       height:8,
-      width: 8,
+      width: 3,
       name: 'Bedroom'
     });
   }

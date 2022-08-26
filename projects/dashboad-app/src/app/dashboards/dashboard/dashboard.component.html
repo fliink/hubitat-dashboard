@@ -1,6 +1,8 @@
 <div class="page-wrapper" fxLayout="column">
-    <div>
-        <div>{{dashboard.name}} <button (click)="settings = true">Edit</button></div>
+    <div fxLayout="row">
+        <button routerLink="..">Back</button>
+        <div>{{dashboard.name}}</div>
+        <button (click)="settings = true">Edit</button>
     </div>
     <div fxFlex="1 0" class="grid-wrapper">
         <div class="grid grid-template"
@@ -47,9 +49,12 @@
         <button (click)="deleteTile(activeTile)">Delete</button>
 
     </div>
+    <div class="menu-mask" [ngClass]="{show: settings}" (click)="settings = false">
+
+    </div>
 
     <div class="editor" [ngClass]="{closed: !settings}">
-        <input #dashboardname [value]="dashboard.name" placeholder="Dashboard Name">
+        <input #dashboardname [value]="dashboard.name" placeholder="Dashboard Name" (input)="dashboard.name = $event.target['value']">
         <div class="step-editor">
             <button (click)="changeWidth(-1)">-</button>
             <div>{{dashboard.width}}</div>
@@ -60,7 +65,6 @@
             <div>{{dashboard.height}}</div>
             <button (click)="changeHeight(1)">+</button>
         </div>
-        <input #dashboardname [value]="dashboard.height" placeholder="Dashboard Height">
         <button (click)="toggleEdit()">Edit</button>
         <button (click)="settings = false">Done</button>
     </div>
