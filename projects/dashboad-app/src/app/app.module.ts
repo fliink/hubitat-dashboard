@@ -22,6 +22,7 @@ import { HighlightDirective } from './directives/drag-start.directive';
 import { DragService } from './directives/drag-start.service';
 import { HCanvasComponent } from './components/h-canvas/h-canvas.component';
 import { ColorSliderComponent } from './components/color-slider/color-slider.component';
+import { DashboardService } from '../services/dashboard.service';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,7 @@ import { ColorSliderComponent } from './components/color-slider/color-slider.com
     FormsModule,
     SocketIoModule.forRoot({ url: 'http://192.168.1.55:8080', options: { } })
   ],
-  providers: [MakerApiService, DragService],
+  providers: [MakerApiService, DragService, DashboardService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

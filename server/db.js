@@ -20,13 +20,6 @@ function save(data) {
     });
 }
 
-function load(data) {
-    return store2;
-}
-
-
-
-
 function store(path, data) {
     let ids= [];
     if(fs.existsSync(`data/${path}/index.json`)){
@@ -42,7 +35,9 @@ function store(path, data) {
 }
 
 function get(path) {
-
+    if(!fs.existsSync(`data/${path}/index.json`)){
+        return;
+    }
     //TODO: null check
     const x = JSON.parse(fs.readFileSync(`data/${path}/index.json`));
     let records = [];

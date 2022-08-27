@@ -1,4 +1,5 @@
 import { Component, ComponentFactoryResolver, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { DashboardService } from 'projects/dashboad-app/src/services/dashboard.service';
 import { MakerApiService } from 'projects/dashboad-app/src/services/maker-api.service';
 import { Dashboard, DashboardTile } from 'projects/models/src/lib/dashboard-api/dashboard';
 import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
@@ -40,7 +41,9 @@ export class DashboardComponent implements OnInit {
 
   editorMode: boolean = false;
 
-  constructor(private makerService: MakerApiService, private componentFactoryResolver: ComponentFactoryResolver, private vc: ViewContainerRef) {
+  constructor(private makerService: MakerApiService, 
+    private dashboardService: DashboardService, 
+    private componentFactoryResolver: ComponentFactoryResolver, private vc: ViewContainerRef) {
     this.devices$ = this.makerService.devices$.pipe(skipWhile(x => !x.length), take(1));
     this.makerService.loadDevices();
     forkJoin([this.makerService.load(), this.devices$]).pipe(take(1)).subscribe(([state, devices]) => {
@@ -71,6 +74,7 @@ export class DashboardComponent implements OnInit {
       tiles: this.tiles
     }
     localStorage.setItem('dashboard', JSON.stringify(saveState));
+    this.dashboardService.save(saveState);
     this.makerService.save(saveState);
   }
 

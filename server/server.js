@@ -4,6 +4,7 @@ const request = require("request");
 const { networkInterfaces } = require('os');
 const db = require('./db');
 const dashboards = require("./services/dashboards.service");
+const profile = require("./services/users.service");
 
 
 const app = express();
@@ -102,6 +103,7 @@ app.get("/sendCommand", (req, res) => {
 });
 
 dashboards.register(app);
+profile.register(app);
 
 const server = app.listen(8080, () => {
  log('Hubitat Express Server Started.');
