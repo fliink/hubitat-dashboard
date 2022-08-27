@@ -11,13 +11,13 @@ function getMany(req, res){
     if(dashboards){
         res.jsonp(dashboards);
     }else{
-        res.status(404).send("Sorry can't find that!")
+        res.status(404).send("Sorry can't find that!");
     }
 }
 
 function post(req, res){
     const dashboard = req.body;
-    db.store('dashboards',dashboard);
+    db.store('dashboards',dashboard); 
     res.jsonp(dashboard);
 }
 
