@@ -1,7 +1,7 @@
 <div class="page-wrapper" fxLayout="column">
     <div fxLayout="row">
         <button routerLink="..">Back</button>
-        <div>{{dashboard.name}}</div>
+        <div fxFlex="1 0" class="dashboard-title">{{dashboard.name}}</div>
         <button (click)="settings = true">Edit</button>
     </div>
     <div fxFlex="1 0" class="grid-wrapper">

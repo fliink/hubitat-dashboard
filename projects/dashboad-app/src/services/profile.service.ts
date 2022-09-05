@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
-import { delay, map, mergeMap, share, tap } from 'rxjs/operators';
+import { delay, map, mergeMap, share, tap, take } from 'rxjs/operators';
 import { DeviceCapabilities, HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 import { Socket } from 'ngx-socket-io';
 import { environment } from '../environments/environment';
@@ -17,13 +17,8 @@ export class ProfileService {
     profile$: Observable<{ id: string, firstName: string }> = this._profileSubject.asObservable();
 
     constructor(private http: HttpClient, private socket: Socket) {
-        this.init();
     }
 
-    init() {
-        // const registerUrl = `${this.apiHost}/register`;
-        // this.http.get(registerUrl).subscribe();
-    }
 
     save(data: any): void {
         const saveUrl = `${this.apiHost}/profile`;
@@ -32,12 +27,12 @@ export class ProfileService {
         });
     }
 
-    load(): Observable<{ id: string, firstName: string }> {
-        const loadUrl = `${this.apiHost}/dashboards`;
-        return this.http.get<{ id: string, firstName: string }>(loadUrl).pipe(tap(x => {
+    load(): void {
+        const loadUrl = `${this.apiHost}/profile`;
+        this.http.get<{ id: string, firstName: string }>(loadUrl).pipe(take(1)).subscribe(x => {
             this._profile = x;
             this._profileSubject.next(this._profile);
-        }));
+        });
     }
 
 }

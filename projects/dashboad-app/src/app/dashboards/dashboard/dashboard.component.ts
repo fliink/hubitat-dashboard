@@ -1,10 +1,11 @@
 import { Component, ComponentFactoryResolver, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DashboardService } from 'projects/dashboad-app/src/services/dashboard.service';
 import { MakerApiService } from 'projects/dashboad-app/src/services/maker-api.service';
 import { Dashboard, DashboardTile } from 'projects/models/src/lib/dashboard-api/dashboard';
 import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
-import { forkJoin, Observable } from 'rxjs';
-import { skipWhile, take } from 'rxjs/operators';
+import { combineLatest, forkJoin, Observable } from 'rxjs';
+import { filter, map, skipWhile, take } from 'rxjs/operators';
 import { DragPosition } from '../../models/position';
 
 
@@ -23,7 +24,7 @@ export class DashboardComponent implements OnInit {
   @ViewChild('grideditor') gridEditor!: ElementRef<HTMLDivElement>;
   @ViewChild('editorcontainer', { read: ViewContainerRef }) editorcontainer!: ViewContainerRef;
 
-  dashboard: Dashboard = { id: 0, name: '', height: 8, width: 8 };
+  dashboard: Dashboard = { id: 0, name: '', height: 8, width: 8, tiles: [] };
   gridCells: { row: number, column: number }[] = [];
   activeTemplateTile?: { element: HTMLElement, start: { row: number, column: number }, end?: { row: number, column: number } };
 
@@ -41,17 +42,23 @@ export class DashboardComponent implements OnInit {
 
   editorMode: boolean = false;
 
-  constructor(private makerService: MakerApiService, 
-    private dashboardService: DashboardService, 
-    private componentFactoryResolver: ComponentFactoryResolver, private vc: ViewContainerRef) {
+  constructor(private makerService: MakerApiService,
+    private dashboardService: DashboardService,
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private vc: ViewContainerRef,
+    private router: Router,
+    private route: ActivatedRoute) {
     this.devices$ = this.makerService.devices$.pipe(skipWhile(x => !x.length), take(1));
     this.makerService.loadDevices();
-    forkJoin([this.makerService.load(), this.devices$]).pipe(take(1)).subscribe(([state, devices]) => {
-      state.tiles?.forEach(t => {
+
+    combineLatest([route.params.pipe(map(x => x['id'])), this.dashboardService.dashboards$, this.devices$]).pipe(take(1)).subscribe(([id, dashboards, devices]) => {
+      var dashboard = dashboards.find(x => x.id === id) || this.dashboard;
+
+      dashboard.tiles?.forEach(t => {
         t.device = devices.find(d => d.id === t.device.id);
         this.tiles.push(t);
       });
-      this.dashboard = state.dashboard;
+      this.dashboard = dashboard;
 
       for (let i = 1; i <= this.dashboard.height; i++) {
         for (let j = 1; j <= this.dashboard.width; j++) {
@@ -69,17 +76,14 @@ export class DashboardComponent implements OnInit {
   }
 
   save() {
-    const saveState = {
-      dashboard: this.dashboard,
-      tiles: this.tiles
-    }
-    localStorage.setItem('dashboard', JSON.stringify(saveState));
-    this.dashboardService.save(saveState);
-    this.makerService.save(saveState);
+    const saveState = { ...this.dashboard, tiles: this.tiles };
+    this.dashboardService.save(saveState).subscribe(x => {
+      this.router.navigate([`/dashboards/${x.id}`]);
+    });
   }
 
   ngOnInit(): void {
-   
+
   }
 
   originTile: { row: number, column: number };

@@ -5,6 +5,7 @@ export interface Dashboard {
     name: string;
     height: number;
     width: number;
+    tiles: DashboardTile[];
 }
 
 export interface DashboardTile {

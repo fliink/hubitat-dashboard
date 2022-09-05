@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Dashboard } from 'projects/models/src/lib/dashboard-api/dashboard';
 import { Observable, of } from 'rxjs';
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-dashboards',
@@ -12,21 +13,8 @@ export class DashboardsComponent implements OnInit {
   private dashboards: Dashboard[];
   dashboards$: Observable<Dashboard[]>;
 
-  constructor() {
-    this.dashboards = [
-      
-    ];
-
-    this.dashboards$ = of(this.dashboards);
-  }
-
-  newDashboard(): void {
-    this.dashboards.push({
-      id: 3,
-      height:8,
-      width: 3,
-      name: 'Bedroom'
-    });
+  constructor( dashboardSvc: DashboardService) {
+    this.dashboards$ = dashboardSvc.dashboards$;
   }
 
   ngOnInit(): void {

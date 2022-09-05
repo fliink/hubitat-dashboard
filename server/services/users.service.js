@@ -11,7 +11,7 @@ function get(req, res){
     if(profile && profile.length == 1){
         res.jsonp(profile[0]);
     }else{
-        res.jsonp({});
+        res.jsonp({id: '27', firstName: 'Adam'});
     }
 }
 

@@ -2,7 +2,7 @@
     background-color: var(--control-background);
     display: block;
     margin: 5px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     box-shadow: 0px 0px 5px rgba(0,0,0,.5);
 }
 
@@ -10,12 +10,12 @@
     height: calc(100% - 16px);
     padding: 8px;
 
-    .tile-title{
+    button.tile-title{
         font-size: 12px;
         white-space: nowrap;
-        margin-bottom: 3px;
-        background-color: #333;
-        color: white;
+        margin-bottom: 10px;
+        background-color: transparent;
+        color: var(--color);
         border: none;
         border-radius: 5px;
     }

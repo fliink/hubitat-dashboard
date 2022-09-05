@@ -30,7 +30,7 @@ export class ButtonSliderComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.debouncer.pipe(debounceTime(50)).subscribe(x => {
+    this.debouncer.pipe(debounceTime(200)).subscribe(x => {
       this.changed.next(x);
     });
   }

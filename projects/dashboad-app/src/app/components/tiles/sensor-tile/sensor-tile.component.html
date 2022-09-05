@@ -2,8 +2,8 @@
     <div>{{device.attributes.temperature}}°F</div>
     <div>{{device.attributes.humidity}}%</div>
     <div class="indicators" fxLayout="row">
-        <div class="motion-indicator" [ngClass]="{'motion-active': device.attributes.motion === 'active' }"></div>
-        <div class="illuminance-indicator">
+        <div class="indicator motion-indicator" [ngClass]="{'motion-active': device.attributes.motion === 'active' }"></div>
+        <div class="indicator illuminance-indicator">
             <div class="illuminance-level" [ngStyle]="{opacity: device.attributes.illuminance/100}"></div>
         </div>
     </div>

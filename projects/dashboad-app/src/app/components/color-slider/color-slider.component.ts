@@ -54,7 +54,7 @@ export class ColorSliderComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.debouncer.pipe(debounceTime(50)).subscribe(x => {
+    this.debouncer.pipe(debounceTime(200)).subscribe(x => {
       this.changed.next(x);
     });
   }

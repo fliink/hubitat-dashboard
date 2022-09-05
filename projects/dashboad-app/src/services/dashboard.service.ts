@@ -12,33 +12,27 @@ export class DashboardService {
 
     private apiHost = environment.apiUrl;
 
-    private _dashboards: { [key: string]: HubitatDevice };
-    private _dashboardArray: BehaviorSubject<HubitatDevice[]> = new BehaviorSubject(<HubitatDevice[]>[]);
-    dashboards$: Observable<HubitatDevice[]> = this._dashboardArray.asObservable();
+    private _dashboards: { [key: string]: Dashboard };
+    private _dashboardArray: BehaviorSubject<Dashboard[]> = new BehaviorSubject(<Dashboard[]>[]);
+    dashboards$: Observable<Dashboard[]> = this._dashboardArray.asObservable();
 
     constructor(private http: HttpClient, private socket: Socket) {
         this._dashboards = {};
-        this.init();
-
     }
 
-    init() {
-        // const registerUrl = `${this.apiHost}/register`;
-        // this.http.get(registerUrl).subscribe();
-    }
-
-    save(data: any): void {
+    save(data: any): Observable<any> {
         const saveUrl = `${this.apiHost}/dashboards`;
-        this.http.post(saveUrl, JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } }).subscribe(x => {
-            console.log(x);
-        });
+        return this.http.post(saveUrl, JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } }).pipe(tap(x=>{
+            this._dashboards[x.id] = x;
+        }));
     }
 
     load(): Observable<Dashboard[]> {
         const loadUrl = `${this.apiHost}/dashboards`;
         return this.http.get<Dashboard[]>(loadUrl).pipe(tap(x=>{
             this._dashboards = x.reduce((a, b)=>{
-                return a[b.id] = b;
+                a[b.id] = b;
+                return a;
             }, {});
             this._dashboardArray.next(Object.values(this._dashboards));
         }));
