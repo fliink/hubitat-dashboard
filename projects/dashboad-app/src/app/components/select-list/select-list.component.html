@@ -1,0 +1,5 @@
+<div *ngFor="let item of localItems" [ngClass]="{selected: item.selected}">
+    <button (click)="selectItem(item)">S</button>
+    <ng-container *ngTemplateOutlet="template; context: {item: item.item}">
+    </ng-container>
+</div>

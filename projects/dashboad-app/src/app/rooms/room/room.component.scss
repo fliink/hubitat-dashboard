@@ -1,0 +1,16 @@
+.title{
+    font-size: var(--section-title-font-size);
+    margin-bottom: 5px;
+}
+
+.device-list {
+    margin-bottom:  20px;
+}
+
+.header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: var(--page-title-font-size);
+    margin-bottom: 20px;
+}

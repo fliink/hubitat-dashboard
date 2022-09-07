@@ -24,6 +24,22 @@ import { HCanvasComponent } from './components/h-canvas/h-canvas.component';
 import { ColorSliderComponent } from './components/color-slider/color-slider.component';
 import { DashboardService } from '../services/dashboard.service';
 import { ProfileService } from '../services/profile.service';
+import { GroupsComponent } from './groups/groups.component';
+import { GroupComponent } from './groups/group/group.component';
+import { RoomsComponent } from './rooms/rooms.component';
+import { RoomComponent } from './rooms/room/room.component';
+import { SelectListComponent } from './components/select-list/select-list.component';
+import { RoomService } from '../services/room.service';
+import { IsLightPipe } from './pipes/is-light.pipe';
+import { IsSensorPipe } from './pipes/is-sensor.pipe';
+import { DeviceListItemComponent } from './components/device-list-item/device-list-item.component';
+import { LightListItemComponent } from './components/device-list-item/light-list-item/light-list-item.component';
+import { SensorListItemComponent } from './components/device-list-item/sensor-list-item/sensor-list-item.component';
+import { ThermostatListItemComponent } from './components/device-list-item/thermostat-list-item/thermostat-list-item.component';
+import { SwitchListItemComponent } from './components/device-list-item/switch-list-item/switch-list-item.component';
+import { IsSwitchPipe } from './pipes/is-switch.pipe';
+import { environment } from '../environments/environment';
+import { AnyOnPipe } from './pipes/any-on.pipe';
 
 @NgModule({
   declarations: [
@@ -39,7 +55,21 @@ import { ProfileService } from '../services/profile.service';
     ButtonSliderComponent,
     ColorSliderComponent,
     HighlightDirective,
-    HCanvasComponent
+    HCanvasComponent,
+    GroupsComponent,
+    GroupComponent,
+    RoomsComponent,
+    RoomComponent,
+    SelectListComponent,
+    IsLightPipe,
+    IsSensorPipe,
+    DeviceListItemComponent,
+    LightListItemComponent,
+    SensorListItemComponent,
+    ThermostatListItemComponent,
+    SwitchListItemComponent,
+    IsSwitchPipe,
+    AnyOnPipe,
   ],
   imports: [
     BrowserModule,
@@ -48,9 +78,9 @@ import { ProfileService } from '../services/profile.service';
     FlexLayoutModule,
     HttpClientModule,
     FormsModule,
-    SocketIoModule.forRoot({ url: 'http://192.168.1.55:8080', options: { } })
+    SocketIoModule.forRoot({ url: environment.apiUrl, options: { } })
   ],
-  providers: [MakerApiService, DragService, DashboardService, ProfileService],
+  providers: [MakerApiService, DragService, DashboardService, ProfileService, RoomService, AnyOnPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

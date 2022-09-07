@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
-import { delay, map, mergeMap, share, tap } from 'rxjs/operators';
+import { delay, map, mergeMap, share, skipWhile, tap } from 'rxjs/operators';
 import { DeviceCapabilities, HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 import { Socket } from 'ngx-socket-io';
 import { environment } from '../environments/environment';
@@ -12,16 +12,18 @@ export class MakerApiService {
 
     private apiHost = environment.apiUrl;
 
+    private initialized = false;
     private _devices: { [key: string]: HubitatDevice };
     private _deviceArray: BehaviorSubject<HubitatDevice[]> = new BehaviorSubject(<HubitatDevice[]>[]);
-    devices$: Observable<HubitatDevice[]> = this._deviceArray.asObservable();
+    devices$: Observable<HubitatDevice[]> = this._deviceArray.asObservable().pipe(skipWhile(x => x.length == 0));
     constructor(private http: HttpClient, private socket: Socket) {
         this._devices = {};
         this.socket.on('message', (x: { deviceId: string, value: any, name: string }) => {
             this._devices[x.deviceId].attributes[x.name] = x.value;
+            this._deviceArray.next(Object.values(this._devices));
         });
-        this.init();
 
+        this.init();
     }
 
     init() {
@@ -42,7 +44,8 @@ export class MakerApiService {
     }
 
     loadDevices(): void {
-        this.http.get<HubitatDevice[]>(`${this.apiHost}/devices`).subscribe((result => {
+        if (this.initialized) { return; }
+        this.http.get<HubitatDevice[]>(`${this.apiHost}/devices`).pipe(tap(x => this.initialized = true)).subscribe((result => {
             result.forEach(x => {
                 x.attributes = x.attributes || {};
                 if (x.attributes.lightEffects) {
@@ -59,31 +62,18 @@ export class MakerApiService {
                 return a;
             }, {});
 
-            this._deviceArray.next(Object.values(this._devices));
+            this._deviceArray.next(Object.values(this._devices).sort(((a, b) => a.label.localeCompare(b.label))));
         }));
     }
 
-    sendCommand(deviceId: string, commands: { [key: string]: any } | string): Observable<HubitatDevice | HubitatDevice[]> {
+    sendCommand(deviceId: string, commands: { [key: string]: any } | string, emitOnSuccess?: {value: string, attribute: string}): Observable<HubitatDevice | HubitatDevice[]> {
         if (typeof commands === 'string') {
-            return this.http.get<HubitatDevice>(`${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${commands}`).pipe(tap((r: HubitatDevice) => {
-                const device = r.attributes = r.attributes || {};
-                if (r.attributes.lightEffects) {
-                    r.attributes.lightEffects = JSON.parse(<string>r.attributes.lightEffects);
-                }
-                r.capabilityLookup = r.capabilities.reduce((a: DeviceCapabilities, b) => {
-                    a[b] = true;
-                    return a;
-                }, {});
-                this._devices[r.id] = r;
-                this._deviceArray.next(Object.values(this._devices));
-            }));
+            return this.http.get<HubitatDevice>(`${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${commands}&emitValue=${emitOnSuccess.value}&emitAttribute=${emitOnSuccess.attribute}`);
         }
         else {
             const requests = Object.keys(commands).map(command => {
-                const url: string = `${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${command}&value=${commands[command]}`;
-                return this.http.get<HubitatDevice>(`${url}`).pipe(tap(r => {
-                    console.log(r);
-                }));
+                const url: string = `${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${command}&value=${commands[command]}&emitValue=${emitOnSuccess.value}&emitAttribute=${emitOnSuccess.attribute}`;
+                return this.http.get<HubitatDevice>(`${url}`);
             });
             return forkJoin(requests);
         }

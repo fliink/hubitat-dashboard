@@ -1,0 +1,5 @@
+<button [routerLink]="['.', 'new']">Add New Room</button>
+
+<div *ngFor="let room of rooms$ | async" [routerLink]="['.', room.id]">
+    {{room.name}}
+</div>

@@ -1,9 +1,10 @@
 [Unit]
 Description="Hubitat Service App"
+After=network.target
 
 [Service]
 ExecStart=/usr/bin/node server.js
-WorkingDirectory=/var/www/express/hubitat
+WorkingDirectory=/var/www/svc
 Restart=always
 RestartSec=10
 StandardOutput=syslog

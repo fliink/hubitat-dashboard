@@ -1,0 +1,7 @@
+.device-list-item{
+    display: flex;
+    flex-direction: row;
+    :first-child{
+        flex-grow: 1;
+    }
+}
