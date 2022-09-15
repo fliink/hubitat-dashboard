@@ -49,7 +49,6 @@ export class ColorSliderComponent implements OnInit, OnChanges {
         lightness: 100
       };
       this.cssValue = `hsl(${cssValue.hue},100%,${100 - cssValue.saturation / 2}%)`;
-      console.log('111', this.cssValue);
     }
   }
 
