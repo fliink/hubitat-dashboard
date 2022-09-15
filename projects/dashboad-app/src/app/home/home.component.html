@@ -1,0 +1,18 @@
+<div fxLayout="row" *ngIf="(devices$ | async | thermostat) as thermostat" class="thermostat">
+    <div class="temperature-reading">
+        {{thermostat | temperature}}
+    </div>
+    <div fxLayout="row" >
+        <div fxLayout="column" class="temperature-control" *ngIf="thermostat.attributes.thermostatMode !== 'cool'" >
+            <button (click)="incrementTemperature(thermostat, 1, 'heat')">Up</button>
+            <div>{{thermostat.attributes.heatingSetpoint | temperature}}</div>
+            <button (click)="incrementTemperature(thermostat, -1, 'heat')">Down</button>
+        </div>
+        <div fxLayout="column" class="temperature-control" *ngIf="thermostat.attributes.thermostatMode !== 'heat'" >
+            <button (click)="incrementTemperature(thermostat, 1, 'cool')">Up</button>
+            <div>{{thermostat.attributes.coolingSetpoint | temperature}}</div>
+            <button (click)="incrementTemperature(thermostat, -1, 'cool')">Down</button>
+        </div>
+
+    </div>
+</div>

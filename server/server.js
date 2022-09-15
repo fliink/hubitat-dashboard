@@ -89,8 +89,8 @@ app.get("/sendCommand", (req, res) => {
   const deviceId = req.query['deviceId'];
   const command = req.query['command'];
   const value = req.query['value'];
-  const emitAttribute = req.query['emitAttribute'];
-  const emitValue = req.query['emitValue'];
+  const emitValue = req.query['emit'];
+
 
   let uri = `${apiHost}/devices/${deviceId}/${command}`;
   if (value) {
@@ -101,12 +101,24 @@ app.get("/sendCommand", (req, res) => {
   request({ uri }, (error, response, body) => {
     const result = JSON.parse(body);
     devices = result;
-    if (emitAttribute && emitValue) {
-      io.emit('message', {
-        deviceId: result.id,
-        name: emitAttribute,
-        value: emitValue
-      });
+    if (emitValue) {
+      if (Array.isArray(emitValue)) {
+        emitValue.forEach(x => {
+          const values = x.split('|');
+          io.emit('message', {
+            deviceId: result.id,
+            name: values[0],
+            value: values[1]
+          });
+        });
+      } else {
+        const values = emitValue.split('|');
+        io.emit('message', {
+          deviceId: result.id,
+          name: values[0],
+          value: values[1]
+        });
+      }
     }
     res.jsonp(devices);
   });

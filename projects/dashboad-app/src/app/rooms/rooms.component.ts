@@ -13,13 +13,16 @@ import { RoomService } from '../../services/room.service';
 export class RoomsComponent implements OnInit {
 
   rooms$: Observable<Room[]>;
+  devices$: Observable<HubitatDevice[]>;
   
-  constructor(private roomService: RoomService) { 
+  constructor(private roomService: RoomService, private makerApiSvc: MakerApiService) { 
     this.rooms$ = this.roomService.rooms$;
     this.roomService.load();
+    this.makerApiSvc.loadDevices();
   }
 
   ngOnInit(): void {
+    this.devices$ = this.makerApiSvc.devices$;
   }
 
 

@@ -40,6 +40,9 @@ import { SwitchListItemComponent } from './components/device-list-item/switch-li
 import { IsSwitchPipe } from './pipes/is-switch.pipe';
 import { environment } from '../environments/environment';
 import { AnyOnPipe } from './pipes/any-on.pipe';
+import { ThermostatPipe } from './pipes/thermostat.pipe';
+import { HomeComponent } from './home/home.component';
+import { TemperaturePipe } from './pipes/temperature.pipe';
 
 @NgModule({
   declarations: [
@@ -70,6 +73,9 @@ import { AnyOnPipe } from './pipes/any-on.pipe';
     SwitchListItemComponent,
     IsSwitchPipe,
     AnyOnPipe,
+    ThermostatPipe,
+    HomeComponent,
+    TemperaturePipe,
   ],
   imports: [
     BrowserModule,
@@ -80,7 +86,7 @@ import { AnyOnPipe } from './pipes/any-on.pipe';
     FormsModule,
     SocketIoModule.forRoot({ url: environment.apiUrl, options: { } })
   ],
-  providers: [MakerApiService, DragService, DashboardService, ProfileService, RoomService, AnyOnPipe],
+  providers: [MakerApiService, DragService, DashboardService, ProfileService, RoomService, AnyOnPipe, ThermostatPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

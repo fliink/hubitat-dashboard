@@ -6,6 +6,7 @@ import { DeviceCapabilities, HubitatDevice } from 'projects/models/src/lib/maker
 import { Socket } from 'ngx-socket-io';
 import { environment } from '../environments/environment';
 import { url } from 'inspector';
+import { isArray } from 'util';
 
 @Injectable()
 export class MakerApiService {
@@ -66,13 +67,22 @@ export class MakerApiService {
         }));
     }
 
-    sendCommand(deviceId: string, commands: { [key: string]: any } | string, emitOnSuccess?: {value: string, attribute: string}): Observable<HubitatDevice | HubitatDevice[]> {
+    sendCommand(deviceId: string, commands: { [key: string]: any } | string, emitOnSuccess?: {value: string | number, attribute: string} | {attribute: string, value: string | number} []): Observable<HubitatDevice | HubitatDevice[]> {
+        var emitString = '';
+        if(Array.isArray(emitOnSuccess)){
+            emitOnSuccess.forEach(x=>{
+                emitString +=`&emit=${x.attribute}|${x.value}`;
+            });
+        }else{
+            emitString +=`&emit=${emitOnSuccess.value}|${emitOnSuccess.attribute}`;
+        }
+
         if (typeof commands === 'string') {
-            return this.http.get<HubitatDevice>(`${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${commands}&emitValue=${emitOnSuccess.value}&emitAttribute=${emitOnSuccess.attribute}`);
+            return this.http.get<HubitatDevice>(`${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${commands}${emitString}`);
         }
         else {
             const requests = Object.keys(commands).map(command => {
-                const url: string = `${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${command}&value=${commands[command]}&emitValue=${emitOnSuccess.value}&emitAttribute=${emitOnSuccess.attribute}`;
+                const url: string = `${this.apiHost}/sendCommand?deviceId=${deviceId}&command=${command}&value=${commands[command]}${emitString}`;
                 return this.http.get<HubitatDevice>(`${url}`);
             });
             return forkJoin(requests);

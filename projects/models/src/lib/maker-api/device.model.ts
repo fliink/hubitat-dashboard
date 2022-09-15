@@ -57,6 +57,8 @@ export interface HubitatDeviceAttributes {
     hue?: number,
     level?: number,
     thermostatSetpoint?: number,
+    coolingSetpoint?: number,
+    heatingSetpoint?: number,
     lightEffects?: { [key: number]: string }
     saturation?: number,
     temperature?: number,
