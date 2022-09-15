@@ -7,6 +7,7 @@
     --button-background: #444;
     --page-title-font-size: 1.4em;
     --section-title-font-size: 1.2em;
+    --title-font-size: 1.2em;
     --font-size: 14px;
     --border-radius: 3px;
     --menu-background: var(--background-color);
@@ -37,4 +38,9 @@ button {
     height: 2em;
     line-height: 0px;
     cursor: pointer;
+}
+
+.title {
+    font-size: var(--title-font-size);
+    font-weight: 600;
 }

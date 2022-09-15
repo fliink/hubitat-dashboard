@@ -26,7 +26,7 @@ const routes: Routes = [{
   component: RoomComponent
 },{
   path: 'rooms',
-  component: RoomsComponent
+  component: HomeComponent
 },{
   path: 'home',
   component: HomeComponent

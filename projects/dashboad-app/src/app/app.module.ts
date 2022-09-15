@@ -43,6 +43,8 @@ import { AnyOnPipe } from './pipes/any-on.pipe';
 import { ThermostatPipe } from './pipes/thermostat.pipe';
 import { HomeComponent } from './home/home.component';
 import { TemperaturePipe } from './pipes/temperature.pipe';
+import { AttributePipe } from './pipes/attribute.pipe';
+import { ColorAveragePipe } from './pipes/color-average.pipe';
 
 @NgModule({
   declarations: [
@@ -76,6 +78,8 @@ import { TemperaturePipe } from './pipes/temperature.pipe';
     ThermostatPipe,
     HomeComponent,
     TemperaturePipe,
+    AttributePipe,
+    ColorAveragePipe,
   ],
   imports: [
     BrowserModule,

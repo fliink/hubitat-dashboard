@@ -15,13 +15,16 @@ export class MakerApiService {
 
     private initialized = false;
     private _devices: { [key: string]: HubitatDevice };
-    private _deviceArray: BehaviorSubject<HubitatDevice[]> = new BehaviorSubject(<HubitatDevice[]>[]);
-    devices$: Observable<HubitatDevice[]> = this._deviceArray.asObservable().pipe(skipWhile(x => x.length == 0));
+    private _deviceMap: BehaviorSubject<{ [key: string]: HubitatDevice }> = new BehaviorSubject(<{ [key: string]: HubitatDevice }>null);
+
+    deviceMap$: Observable<{ [key: string]: HubitatDevice }> = this._deviceMap.asObservable().pipe(skipWhile(x => !x));
+    devices$: Observable<HubitatDevice[]> = this.deviceMap$.pipe(map(x=>Object.values(x).sort(((a, b) => a.label.localeCompare(b.label)))));
+
     constructor(private http: HttpClient, private socket: Socket) {
         this._devices = {};
         this.socket.on('message', (x: { deviceId: string, value: any, name: string }) => {
             this._devices[x.deviceId].attributes[x.name] = x.value;
-            this._deviceArray.next(Object.values(this._devices));
+            this._deviceMap.next(this._devices);
         });
 
         this.init();
@@ -63,7 +66,7 @@ export class MakerApiService {
                 return a;
             }, {});
 
-            this._deviceArray.next(Object.values(this._devices).sort(((a, b) => a.label.localeCompare(b.label))));
+            this._deviceMap.next(this._devices);
         }));
     }
 
@@ -74,7 +77,7 @@ export class MakerApiService {
                 emitString +=`&emit=${x.attribute}|${x.value}`;
             });
         }else{
-            emitString +=`&emit=${emitOnSuccess.value}|${emitOnSuccess.attribute}`;
+            emitString +=`&emit=${emitOnSuccess.attribute}|${emitOnSuccess.value}`;
         }
 
         if (typeof commands === 'string') {

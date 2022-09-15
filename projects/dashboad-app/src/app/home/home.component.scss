@@ -1,8 +1,8 @@
-.temperature-reading{
+.temperature-reading {
     font-size: 25vw;
 }
 
-.thermostat{
+.thermostat {
     align-items: center;
     justify-content: space-evenly;
 }
@@ -10,4 +10,30 @@
 .temperature-control {
     align-items: stretch;
     text-align: center;
+}
+
+.rooms {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+.room {
+    width: 100%;
+    padding-top: 100%;
+    /* 1:1 Aspect Ratio */
+    position: relative;
+
+    .content {
+        text-shadow: 0 0 1px #555;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        line-height: 1em;
+    }
 }

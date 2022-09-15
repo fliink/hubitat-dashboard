@@ -2,17 +2,28 @@
     <div class="temperature-reading">
         {{thermostat | temperature}}
     </div>
-    <div fxLayout="row" >
-        <div fxLayout="column" class="temperature-control" *ngIf="thermostat.attributes.thermostatMode !== 'cool'" >
+    <div fxLayout="row">
+        <div fxLayout="column" class="temperature-control" *ngIf="thermostat.attributes.thermostatMode !== 'cool'">
             <button (click)="incrementTemperature(thermostat, 1, 'heat')">Up</button>
             <div>{{thermostat.attributes.heatingSetpoint | temperature}}</div>
             <button (click)="incrementTemperature(thermostat, -1, 'heat')">Down</button>
         </div>
-        <div fxLayout="column" class="temperature-control" *ngIf="thermostat.attributes.thermostatMode !== 'heat'" >
+        <div fxLayout="column" class="temperature-control" *ngIf="thermostat.attributes.thermostatMode !== 'heat'">
             <button (click)="incrementTemperature(thermostat, 1, 'cool')">Up</button>
             <div>{{thermostat.attributes.coolingSetpoint | temperature}}</div>
             <button (click)="incrementTemperature(thermostat, -1, 'cool')">Down</button>
         </div>
 
     </div>
+</div>
+<div class="rooms">
+    <button *ngFor="let room of rooms$ | async" class="room" [routerLink]="['../rooms', room.id]" [style.backgroundColor]="room.devices | colorAverage">
+        <div class="content">
+            <div class="title">{{room.name}}</div>
+            <div>{{(room.devices).length}} devices</div>
+             <div>{{(room.devices | isLight | attribute:'switch':'on').length}} lights on</div>
+             <div>{{(room.devices | isSwitch | attribute:'switch':'on').length}} switches on</div>
+             <div>{{room.devices | temperature}}</div>
+        </div>
+    </button>
 </div>
