@@ -16,14 +16,15 @@
 
     </div>
 </div>
-<div class="rooms">
-    <button *ngFor="let room of rooms$ | async" class="room" [routerLink]="['../rooms', room.id]" [style.backgroundColor]="room.devices | colorAverage">
+<div class="rooms list">
+    <button *ngFor="let room of rooms$ | async" class="room" [routerLink]="['../rooms', room.id]" >
         <div class="content">
             <div class="title">{{room.name}}</div>
-            <div>{{(room.devices).length}} devices</div>
-             <div>{{(room.devices | isLight | attribute:'switch':'on').length}} lights on</div>
-             <div>{{(room.devices | isSwitch | attribute:'switch':'on').length}} switches on</div>
-             <div>{{room.devices | temperature}}</div>
+            <div class="device-count">{{(room.devices).length}} devices</div>
+             <div class="light-count">{{(room.devices | isLight | attribute:'switch':'on').length}} lights on</div>
+             <div class="switch-count">{{(room.devices | isSwitch | attribute:'switch':'on').length}} switches on</div>
+             <div class="temperature">{{room.devices | temperature}}</div>
         </div>
+        <div class="indicator" [style.background]="room.devices | colorAverage"></div>
     </button>
 </div>
