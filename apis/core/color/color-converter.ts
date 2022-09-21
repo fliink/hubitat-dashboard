@@ -2,8 +2,8 @@ import { Gamut, XY } from "./cie";
 import { RGBA } from "./rgb";
 
 
-export function XYtoRGB(xy: XY, model: string): RGBA {
-    const colorPoints = getColorPointsForModel(model);
+export function XYtoRGB(xy: XY, model?: string, gamut?: Gamut): RGBA {
+    const colorPoints = gamut || getColorPointsForModel(model);
     const inReachOfLamps = checkPointInLampsReach(xy, colorPoints);
 
     if (!inReachOfLamps) {
@@ -90,13 +90,13 @@ export function XYtoRGB(xy: XY, model: string): RGBA {
 
     return {
         a: 1,
-        r,
-        g,
-        b
+        r: 255 * r,
+        g: 255 * g,
+        b: 255 * b
     };
 }
 
-function getColorPointsForModel(model: string): Gamut {
+function getColorPointsForModel(model?: string): Gamut {
     const hueBulbs = ["LCT001", "LCT002", "LCT003"];
     const livingcolors = [
         "LLC001",
@@ -109,7 +109,7 @@ function getColorPointsForModel(model: string): Gamut {
         "LST001"
     ];
 
-    if(hueBulbs.includes(model)){
+    if(model && hueBulbs.includes(model)){
         return {
             red: {
                 x: 0.674,
@@ -124,7 +124,7 @@ function getColorPointsForModel(model: string): Gamut {
                 y: 0.041
             }
         };
-    }else if( livingcolors.includes(model)){
+    }else if(model && livingcolors.includes(model)){
         return {
             red: {
                 x: 0.703,

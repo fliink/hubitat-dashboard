@@ -9,6 +9,13 @@ export interface HueResource {
     color_temperature: { mirek: number, mirek_valid: boolean, mirek_schema: any },
     color_temperature_delta: any,
     color: { xy: any, gamut: any, gamut_type: string },
+    product_data: {
+      model_id: string
+    },
+    services: [{
+      rid: string,
+      rtype: string
+    }],
     dynamics: {
       status: string,
       status_values: string[],

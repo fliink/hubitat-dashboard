@@ -31,9 +31,13 @@ export class ZynergyServer {
                 const devices = x.reduce((a, b)=>{
                     return a.concat(b);
                 }, []).filter(d=>{
-                    return !query.types || Object.entries(d.capabilities).find((entry)=>{
-                        return query.types?.includes(entry[0]) && entry[1];
+                    const typeFilter = !query.types || Object.entries(d.capabilities).find((entry)=>{
+                        return query.types?.includes(entry[0]) && entry[1] && query.types?.includes(entry[0]) && entry[1];
                     });
+
+                    const providerFilter = typeFilter && (!query.providers || query.providers.includes(d.provider));
+
+                    return providerFilter;
                 });
                 return res.json(devices);
             })
@@ -43,6 +47,7 @@ export class ZynergyServer {
     private getDeviceQuery(params: {[key: string]: any} = {}): DeviceQuery {
         const query: DeviceQuery = {};
         query.types = params['capabilities']?.split(',');
+        query.providers = params['providers']?.split(',');
         return query;
     }
 }

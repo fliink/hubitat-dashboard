@@ -5,6 +5,7 @@ import { HubitatDevice } from "../hubitat-api/models/hubitat-device";
 import { DeviceProvider } from "../providers/device-provider";
 import { ClipService } from "../hue-api/clip.service";
 import { HueResource } from "../hue-api/models/hue-resource";
+import { XYtoRGB } from "../core/color/color-converter";
 
 @Zynjectable()
 export class HueDeviceProvider extends DeviceProvider {
@@ -13,8 +14,13 @@ export class HueDeviceProvider extends DeviceProvider {
         super();
     }
     devices(): Promise<Device[]> {
-        return this.hueApi.getDevices('light').then(x=>{
-            return x.map(y=>this.apiToProvider(y));
+        return this.hueApi.getDevices().then(x=>{
+            const devices = x.filter(y=>y.type == 'device');
+            const lookup = x.reduce((a,b)=>{
+                a[b.id] = b;
+                return a;
+            }, <{[key: string]: HueResource}>{});
+            return devices.map(y=>this.apiToProvider(y, lookup));
         });
     }
 
@@ -22,9 +28,11 @@ export class HueDeviceProvider extends DeviceProvider {
         throw new Error("Method not implemented.");
     }
 
-    private apiToProvider(hueDevice: HueResource): Device{
+    private apiToProvider(hueDevice: HueResource, lookup: {[key: string]: HueResource}): Device{
         const capabilities = this.getCapabilities(hueDevice);
-        const attributes = this.getAttributes(hueDevice);
+        const lightRid = hueDevice.services?.find(x=>x.rtype == 'light')?.rid;
+        const light = lightRid ? lookup[lightRid] : undefined;
+        const attributes = this.getAttributes(hueDevice, light);
         return {
             provider: this.providerName,
             name: hueDevice.metadata?.name,
@@ -34,28 +42,26 @@ export class HueDeviceProvider extends DeviceProvider {
         };
     }
 
-    private getAttributes(hueDevice: HueResource): DeviceAttributes {
+    private getAttributes(hueDevice: HueResource, lightService?: HueResource): DeviceAttributes {
         const attributes: Partial<DeviceAttributes> = {
-            level: hueDevice.dimming.brightness,
-            power: hueDevice.on.on,
-            rgb: this.convertToRgb(hueDevice)
+            level: lightService?.dimming.brightness,
+            power: lightService?.on.on,
+            rgb: this.convertToRgb(hueDevice, lightService)
         };
         return attributes as DeviceAttributes;
     }
-    private convertToRgb(hueDevice: HueResource): { r: number; g: number; b: number; } {
-        return {
-            r: 255,
-            g: 123,
-            b: 127
-        };
+    private convertToRgb(hueDevice: HueResource, lightService?: HueResource): { r: number; g: number; b: number; a?: number } {
+
+        if(!lightService?.color){ return { b: 0, r: 0, g: 0, a: 0}}
+        return XYtoRGB(lightService.color?.xy, lightService?.product_data?.model_id, lightService.color.gamut);
     }
 
-    private getCapabilities(hueDevice: HueResource): DeviceCapabilities {
+    private getCapabilities(hueDevice: HueResource, lightService?: HueResource): DeviceCapabilities {
         const capabilities: Partial<DeviceCapabilities> = {
-            color: !!hueDevice.color,
-            switch: hueDevice.on !== undefined,
-            light: hueDevice.type == 'light',
-            level: hueDevice.dimming !== undefined,
+            color: !!lightService?.color,
+            switch: lightService?.on !== undefined,
+            light: !!lightService,
+            level: lightService?.dimming !== undefined,
             sensor: false,
             thermostat: false
         };
