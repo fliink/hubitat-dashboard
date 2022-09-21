@@ -12,6 +12,10 @@ export class ApiService {
         return this.httpService.get(`${this._host}/${path}`, {
             ...this._options?.requestParameters,
             ...parameters
+        },
+        {
+            ...this._options?.headers,
+            ...headers
         });
     }
 
@@ -22,5 +26,6 @@ export class ApiService {
 }
 
 export interface ApiServiceOptions {
-    requestParameters: {[key: string] : string};
+    requestParameters?: {[key: string] : string};
+    headers?: {[key: string] : string};
 }

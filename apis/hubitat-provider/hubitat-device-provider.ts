@@ -1,17 +1,19 @@
-import { Device } from "../models/device";
+import { Device, DeviceAttributes, DeviceCapabilities } from "../models/device";
 import { Zynjectable } from "../core";
 import { DevicesService } from "../hubitat-api/devices.service";
 import { HubitatDevice } from "../hubitat-api/models/hubitat-device";
 import { DeviceProvider } from "../providers/device-provider";
 
 @Zynjectable()
-export class HubitatDeviceProvider implements DeviceProvider {
-    constructor(private hubitatApi: DevicesService){
+export class HubitatDeviceProvider extends DeviceProvider {
+    providerName: string = 'hubitat';
 
+    constructor(private hubitatApi: DevicesService){
+        super();
     }
     devices(): Promise<Device[]> {
-        return this.hubitatApi.getDevices(true).then(x=>{
-            return x.map(this.apiToProvider);
+        return this.hubitatApi.getDevices(true).then(devices=>{
+            return devices.map(y=>this.apiToProvider(y));
         });
     }
 
@@ -20,9 +22,44 @@ export class HubitatDeviceProvider implements DeviceProvider {
     }
 
     private apiToProvider(hubitatDevice: HubitatDevice): Device{
+        const capabilities = this.getCapabilities(hubitatDevice);
+        const attributes = this.getAttributes(hubitatDevice);
         return {
-            name: hubitatDevice.name
+            provider: this.providerName,
+            name: hubitatDevice.label || hubitatDevice.name,
+            id: hubitatDevice.id,
+            capabilities,
+            attributes
         };
+    }
+    private getAttributes(hubitatDevice: HubitatDevice): DeviceAttributes {
+        const attributes: Partial<DeviceAttributes> = {
+            level: hubitatDevice.attributes.level,
+            power: hubitatDevice.attributes.switch == 'on',
+            rgb: this.convertToRgb(hubitatDevice),
+            temperature: hubitatDevice.attributes.temperature
+        };
+        return attributes as DeviceAttributes;
+    }
+    private convertToRgb(hubitatDevice: HubitatDevice): { r: number; g: number; b: number; } {
+        return {
+            r: 255,
+            g: 123,
+            b: 127
+        };
+    }
+
+    private getCapabilities(hubitatDevice: HubitatDevice): DeviceCapabilities {
+        const capabilities: Partial<DeviceCapabilities> = {
+            color: hubitatDevice.capabilities.indexOf('ColorControl') >= 0,
+            switch: hubitatDevice.capabilities.indexOf('Switch') >= 0,
+            light: hubitatDevice.capabilities.indexOf('Light') >= 0,
+            level: hubitatDevice.capabilities.indexOf('SwitchLevel') >= 0,
+            sensor: hubitatDevice.capabilities.indexOf('Sensor') >= 0,
+            thermostat: hubitatDevice.capabilities.indexOf('Thermostat') >= 0,
+        };
+
+        return capabilities as DeviceCapabilities;
     }
 
 }

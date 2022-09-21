@@ -8,8 +8,8 @@ export interface HubitatDevice {
     label: string;
     type?: string;
     model?: string;
-    capabilities?: string[];
-    capabilityLookup?: HubitatDeviceCapabilities,
-    attributes?: HubitatDeviceAttributes;
+    capabilities: string[];
+    capabilityLookup: HubitatDeviceCapabilities,
+    attributes: HubitatDeviceAttributes;
     commands: HubitatDeviceCommand[]
 }
