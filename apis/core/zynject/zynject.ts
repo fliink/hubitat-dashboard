@@ -18,6 +18,7 @@ export function Zynject<T>(c: T): any {
                 type: c,
                 index: parameterIndex
         });
+        console.log(existingMetadata, target);
         Reflect.defineMetadata(zynjectKey, existingMetadata, target, propertyKey);
     };
 }

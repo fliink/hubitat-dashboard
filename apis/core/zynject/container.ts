@@ -12,6 +12,7 @@ export class ZynjectContainer {
     }
     public static register<T extends Newable>(ctor: T): InstanceType<T> {
 
+        console.log(ctor);
         if (this.mapping.has(ctor)) {
             return this.mapping.get(ctor).singleton;
         }

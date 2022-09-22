@@ -1,8 +1,9 @@
-import { Gamut, XY } from "./cie";
+import { Gamut, XY, XYBright } from "./cie";
 import { RGBA } from "./rgb";
 
 
-export function XYtoRGB(xy: XY, model?: string, gamut?: Gamut): RGBA {
+export function XYtoRGB(xy: XY, brightness: number = 1, model?: string, gamut?: Gamut): RGBA {
+    
     const colorPoints = gamut || getColorPointsForModel(model);
     const inReachOfLamps = checkPointInLampsReach(xy, colorPoints);
 
@@ -30,18 +31,20 @@ export function XYtoRGB(xy: XY, model?: string, gamut?: Gamut): RGBA {
         xy.x = closestPoint.x;
         xy.y = closestPoint.y;
     }
+    
     const x = xy.x;
     const y = xy.y;
     const z = 1.0 - x - y;
 
-    const Y = 1.0;
+    const Y = brightness;
     const X = (Y / y) * x;
     const Z = (Y / y) * z;
 
-    let r = X * 1.656492 - Y * 0.354851 - Z * 0.255038;
-    let g = -X * 0.707196 + Y * 1.655397 + Z * 0.036152;
-    let b = X * 0.051713 - Y * 0.121364 + Z * 1.011530;
+    let r =  X *    1.656492 - Y * 0.354851 - Z * 0.255038;
+    let g = -X *    0.707196 + Y * 1.655397 + Z * 0.036152;
+    let b =  X *    0.051713 - Y * 0.121364 + Z * 1.011530;
 
+    
     if (r > b && r > g && r > 1.0) {
         // red is too big
         g = g / r;
@@ -58,11 +61,17 @@ export function XYtoRGB(xy: XY, model?: string, gamut?: Gamut): RGBA {
         g = g / b;
         b = 1.0;
     }
+    
 
+    
+    //  Gamma correction
     r = r <= 0.0031308 ? 12.92 * r : (1.0 + 0.055) * Math.pow(r, (1.0 / 2.4)) - 0.055;
     g = g <= 0.0031308 ? 12.92 * g : (1.0 + 0.055) * Math.pow(g, (1.0 / 2.4)) - 0.055;
     b = b <= 0.0031308 ? 12.92 * b : (1.0 + 0.055) * Math.pow(b, (1.0 / 2.4)) - 0.055;
 
+
+
+    
     if (r > b && r > g) {
         // red is biggest
         if (r > 1.0) {
@@ -87,13 +96,67 @@ export function XYtoRGB(xy: XY, model?: string, gamut?: Gamut): RGBA {
             b = 1.0;
         }
     }
+    
 
     return {
-        a: 1,
-        r: 255 * r,
-        g: 255 * g,
-        b: 255 * b
+        a: Y,
+        r: r * 255,
+        g: g * 255,
+        b: b * 255
     };
+}
+
+export function RGBtoXY(red: number, green: number, blue: number, gamut?: Gamut, model?: string): XYBright {
+
+    
+        red = red / 255;
+        green = green / 255;
+        blue = blue / 255;
+
+        //Gamma correction
+        red = (red > 0.04045) ? Math.pow((red + 0.055) / (1.0 + 0.055), 2.4) : (red / 12.92);
+        green = (green > 0.04045) ? Math.pow((green + 0.055) / (1.0 + 0.055), 2.4) : (green / 12.92);
+        blue = (blue > 0.04045) ? Math.pow((blue + 0.055) / (1.0 + 0.055), 2.4) : (blue / 12.92);
+
+        const X = red * 0.4124 + green * 0.3576 + blue * 0.1805;
+        const Y = red * 0.2126 + green * 0.7152 + blue * 0.0722;
+        const Z = red * 0.0193 + green * 0.1192 + blue * 0.9505;
+
+        const x = X / (X + Y + Z);
+        const y = Y / (X + Y + Z);
+        const brightness = Y;
+
+        const xy = {x, y, brightness};
+
+        
+        const colorPoints = gamut || getColorPointsForModel(model);
+        const inReachOfLamps = checkPointInLampsReach(xy, colorPoints);
+        if (!inReachOfLamps) {
+            const pAB: XY = getClosestPointToPoints(colorPoints.red, colorPoints.green, xy);
+            const pAC: XY = getClosestPointToPoints(colorPoints.blue, colorPoints.red, xy);
+            const pBC: XY = getClosestPointToPoints(colorPoints.green, colorPoints.blue, xy);
+    
+            const dAB: number = getDistanceBetweenTwoPoints(xy, pAB);
+            const dAC: number = getDistanceBetweenTwoPoints(xy, pAC);
+            const dBC: number = getDistanceBetweenTwoPoints(xy, pBC);
+            let lowest = dAB;
+            let closestPoint = pAB;
+    
+            if (dAC < lowest) {
+                lowest = dAC;
+                closestPoint = pAC;
+            }
+    
+            if (dBC < lowest) {
+                lowest = dBC;
+                closestPoint = pBC;
+            }
+    
+            xy.x = closestPoint.x;
+            xy.y = closestPoint.y;
+        }
+
+        return xy;
 }
 
 function getColorPointsForModel(model?: string): Gamut {

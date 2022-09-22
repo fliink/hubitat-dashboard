@@ -1,5 +1,6 @@
 import { ApiService, ApiFactory, Zynjectable } from '../core';
-import { HueResource } from './models/hue-resource';
+import { HueDevice } from './models/hue-device';
+import { HueLight } from './models/hue-light';
 
 
 
@@ -13,7 +14,15 @@ export class ClipService {
         this._api = this.apiFactory.create(this._apiHost, { headers: this._apiKey });
     }
 
-    getDevices(resourceType?: string): Promise<HueResource[]> {
-        return this._api.get<HueResource[]>(`resource${resourceType ? `/${resourceType}` : ''}`).then(x=>(<any>x).data);
+    getDevices(resourceType?: string): Promise<HueDevice[]> {
+        return this.getResources<HueDevice[]>('device');
+    }
+
+    getLights(resourceType?: string): Promise<HueLight[]> {
+        return this.getResources<HueLight[]>('light');
+    }
+
+    private getResources<T>(resourceType?: string): Promise<T>{
+        return this._api.get<T>(`resource${resourceType ? `/${resourceType}` : ''}`).then(x=>(<any>x).data);
     }
 }
