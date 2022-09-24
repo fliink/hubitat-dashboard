@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Agent } from 'https';
+import { Zynjectable } from './zynject/zynject';
 
+@Zynjectable()
 export class HttpService {
     async get<T>(
         path: string,

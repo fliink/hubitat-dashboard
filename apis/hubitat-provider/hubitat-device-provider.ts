@@ -1,5 +1,5 @@
 import { Device, DeviceAttributes, DeviceCapabilities } from "../models/device";
-import { Zynjectable } from "../core";
+import { Ripple, Zynjectable } from "../core";
 import { DevicesService } from "../hubitat-api/devices.service";
 import { HubitatDevice } from "../hubitat-api/models/hubitat-device";
 import { DeviceProvider } from "../providers/device-provider";
@@ -7,13 +7,16 @@ import { DeviceProvider } from "../providers/device-provider";
 @Zynjectable()
 export class HubitatDeviceProvider extends DeviceProvider {
     providerName: string = 'hubitat';
+    devices$: Ripple<Device[]> = new Ripple<Device[]>();
 
     constructor(private hubitatApi: DevicesService){
         super();
     }
     devices(): Promise<Device[]> {
         return this.hubitatApi.getDevices(true).then(devices=>{
-            return devices.map(y=>this.apiToProvider(y));
+            const filteredDevices = devices.map(y=>this.apiToProvider(y));
+            this.devices$.drop(filteredDevices);
+            return filteredDevices;
         });
     }
 
