@@ -18,17 +18,20 @@ export function Zynject<T>(c: T): any {
                 type: c,
                 index: parameterIndex
         });
-        console.log(existingMetadata, target);
         Reflect.defineMetadata(zynjectKey, existingMetadata, target, propertyKey);
     };
 }
 
 export class Z{
     static get<T extends Newable>(constructor: T): InstanceType<T> {
-        return ZynjectContainer.register(constructor);
+        return ZynjectContainer.get(constructor);
     }
 
+    /**
+     * Registers implemented classes since implementations are never referenced directly, they have to be explicitly registered.
+     * @param constructor Class(es) to register
+     */
     static register<T extends Newable>(constructor: T | T[]) {
-        
+        //  This does nothing but bring the class(es) into context
     }
 }

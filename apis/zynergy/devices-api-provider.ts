@@ -14,7 +14,8 @@ export class DevicesApiServiceProvider extends ApiServiceProvider {
     register(app: Express){
         app.get('/devices', async (req, res) => {
             const filter = new QueryFilter(req.query as {[key: string]: any});
-
+            this.deviceProviders.map(x=>x.devices()));
+            this.deviceProviders.map(x=>x.devices$)
             return Promise.all(this.deviceProviders.map(x=>x.devices())).then(x=>{
                 const devices = x.reduce((a, b)=>{
                     return a.concat(b);
