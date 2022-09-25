@@ -1,14 +1,19 @@
 import { Zynjectable } from "./zynject/zynject";
 
-//  TODO: get a proper configuration object
 @Zynjectable()
 export class ConfigurationService {
-    host: string = '';
 
-    /**
-     *
-     */
+    private _settings: { [key: string]: string } = {};
+
     constructor() {
-        
+
+    }
+
+    get(key: string): string {
+        return this._settings[key];
+    }
+
+    set(key: string, value: string) {
+        return this._settings[key] = value;
     }
 }

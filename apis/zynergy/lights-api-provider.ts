@@ -1,4 +1,4 @@
-import { Zynject, Zynjectable } from '../core';
+import { Ripple, Zynject, Zynjectable } from '../core';
 import { DeviceProvider } from '../providers/device-provider';
 import { Express } from 'express';
 import { ApiServiceProvider } from './api-service-provider';
@@ -16,17 +16,11 @@ export class LightsApiServiceProvider extends ApiServiceProvider {
 
     register(app: Express) {
         app.get(`${this._endpoint}`, async (req, res) => {
-            const filter = new QueryFilter(req.query as { [key: string]: any });
-
-            return Promise.all(this.deviceProviders.map(x => x.devices())).then(x => {
-                const devices = x.reduce((a, b) => {
-                    return a.concat(b);
-                }, []);
-
-                const filteredDevices = filter.filter(devices);
-
-                return res.json(filteredDevices);
-            })
+            const filter = new QueryFilter(req.query as {[key: string]: any});
+            this.deviceProviders.forEach(x=>x.load());
+            Ripple.joinAll(this.deviceProviders.map(x=>x.devices$)).react(x=>{
+                return res.json(x);
+            });
         });
 
         app.post(`${this._endpoint}/:id`, async (req, res) => {

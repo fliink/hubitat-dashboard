@@ -32,6 +32,7 @@ export class Z{
      * @param constructor Class(es) to register
      */
     static register<T extends Newable>(constructor: T | T[]) {
-        //  This does nothing but bring the class(es) into context
+        
     }
+    
 }

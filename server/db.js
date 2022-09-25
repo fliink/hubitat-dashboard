@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 let store2 = { tiles: [], dashboard: { id: 0, name: '', height: 8, width: 3 } };
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 
 function start() {
 

@@ -1,4 +1,4 @@
-import { ApiService, ApiFactory, Zynjectable } from '../core';
+import { ApiService, ApiFactory, Zynjectable, ConfigurationService } from '../core';
 import { HueDevice } from './models/hue-device';
 import { HueLight } from './models/hue-light';
 
@@ -8,10 +8,8 @@ import { HueLight } from './models/hue-light';
 export class ClipService {
 
     private _api: ApiService;
-    private _apiHost = 'https://192.168.1.52/clip/v2';
-    private _apiKey = { 'hue-application-key': 'TLPULPfTSrrCdfnb3p9laiPTaafc9OKOFgrPKNvF' };
-    constructor(private apiFactory: ApiFactory) {
-        this._api = this.apiFactory.create(this._apiHost, { headers: this._apiKey });
+    constructor(private apiFactory: ApiFactory, configurationService: ConfigurationService) {
+        this._api = this.apiFactory.create(configurationService.get('hue-api-host'), { headers: { 'hue-application-key': configurationService.get('hue-api-key') } });
     }
 
     getDevices(resourceType?: string): Promise<HueDevice[]> {

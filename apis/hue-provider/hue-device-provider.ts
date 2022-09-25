@@ -1,31 +1,22 @@
 import { Device, DeviceAttributes, DeviceCapabilities } from "../models/device";
 import { Ripple, Zynjectable } from "../core";
-import { DevicesService } from "../hubitat-api/devices.service";
-import { HubitatDevice } from "../hubitat-api/models/hubitat-device";
 import { DeviceProvider } from "../providers/device-provider";
 import { ClipService } from "../hue-api/clip.service";
-import { HueLight, HueDevice, HueDeviceServices } from "../hue-api/models";
+import { HueDeviceServices } from "../hue-api/models";
 import { XYtoRGB } from "../core/color/color-converter";
 
 @Zynjectable()
 export class HueDeviceProvider extends DeviceProvider {
     providerName: string = 'hue';
     devices$: Ripple<Device[]> = new Ripple<Device[]>();
-    
+
     constructor(private hueApi: ClipService){
         super();
-
-        this.devices$.react(x=>{
-            console.log(x.length);
-            return x.length;
-        }).react(x=>{
-            console.log(x * 2);
-        });
     }
 
 
-    devices(): Promise<Device[]> {
-        return Promise.all([this.hueApi.getDevices(), this.hueApi.getLights()]).then(([devices, lights])=>{
+    load(id?: string){
+        Promise.all([this.hueApi.getDevices(), this.hueApi.getLights()]).then(([devices, lights])=>{
             const deviceServices = devices.map(d=>{
                 const light = lights.find(l=>l.id == d.services.find(s=>s.rtype == 'light')?.rid);
                 return <HueDeviceServices>{
@@ -35,12 +26,7 @@ export class HueDeviceProvider extends DeviceProvider {
             });
             const deviceArray = deviceServices.map(y=>this.apiToProvider(y));
             this.devices$.drop(deviceArray);
-            return deviceArray;
         });
-    }
-
-    device(): Promise<Device>  {
-        throw new Error("Method not implemented.");
     }
 
     private apiToProvider(deviceServices: HueDeviceServices): Device{

@@ -1,7 +1,8 @@
-export abstract class DataFilter {
-    abstract filter(data: any, ...args: any[]): any;
-}
+import { DataFilter } from "./data-filter";
 
+/**
+ * Takes a query object and converts it into a series of filter expressions.
+ */
 export class QueryFilter extends DataFilter {
 
     private _query: {[key: string]: string};
@@ -10,11 +11,18 @@ export class QueryFilter extends DataFilter {
         super();
         this._query = query;
     }
-    filter(data: any[]): any[] {
+
+    /**
+     * 
+     * @param data Apply the filter expressions to the data
+     * @returns 
+     */
+    apply(data: any[]): any[] {
        const filter = this._query['filter'];
        if(filter){
             const fns = this.parseFilterString(filter);
-            return data.filter(d=>fns.every(x=>x(d)));
+            const results = data.filter(d=>fns.every(x=>x(d)));
+            return results;
        }
        return data;
     }
@@ -41,7 +49,8 @@ export class QueryFilter extends DataFilter {
 
         return compiled;
     }
-    compileExpressions(expressions: { inExpression: string[]; isExpression: string[]; hasOneExpression: string[]; hasAllExpression: string[]; hasExpression: string[]; }[]) {
+
+    private compileExpressions(expressions: { inExpression: string[]; isExpression: string[]; hasOneExpression: string[]; hasAllExpression: string[]; hasExpression: string[]; }[]) {
         var fns = expressions.map((x)=>{
             if((x.hasAllExpression.length === 3)){
                 const propertyName = x.hasAllExpression[1];
@@ -57,7 +66,11 @@ export class QueryFilter extends DataFilter {
             if((x.isExpression.length === 3)){
                 const propertyName = x.isExpression[1];
                 const value = x.isExpression[2];
-                return (data: any) => this.getPropertyValue(data, propertyName) === this.getFilterValue(value);
+                return (data: any) => {
+                    const propValue = this.getPropertyValue(data, propertyName);
+                    const filterValue = this.getFilterValue(value);
+                    return propValue === filterValue;
+                }
             }
 
             if((x.inExpression.length === 3)){
@@ -71,19 +84,19 @@ export class QueryFilter extends DataFilter {
                 const value = this.getFilterValue(x.hasExpression[2])
                 return (data: any) => this.getPropertyValue(data, propertyName).toLowerCase().indexOf(value.toLowerCase()) >= 0;
             }
-            return (data: any) => true;
+            return (data: any) => !!data;
         });
 
         return fns;
     }
-    getFilterValue(value: string): any {
-        if(value[0] === "'") return value.slice(1, value.length - 2);
+    private getFilterValue(value: string): any {
+        if(value[0] === "'") return value.slice(1, value.length - 1);
         if(!Number.isNaN(Number(value))) return Number(value);
         if(value === 'true' || value === 'false') return value === 'true';
         return value;
     }
 
-    getPropertyValue(data: any, propertyName: string): any {
+    private getPropertyValue(data: any, propertyName: string): any {
         return propertyName.split('.').reduce((a, b)=>{
             return a[b];
         }, data);

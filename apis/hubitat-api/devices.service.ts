@@ -1,4 +1,4 @@
-import { ApiService, ApiFactory, Zynjectable } from '../core';
+import { ApiService, ApiFactory, Zynjectable, ConfigurationService } from '../core';
 import { HubitatDevice } from './models/hubitat-device';
 
 export interface Devices {
@@ -11,10 +11,8 @@ export interface Devices {
 export class DevicesService {
 
     private _api: ApiService;
-    private _apiHost = 'http://192.168.1.99/apps/api/45';
-    private _apiKey = { 'access_token': 'bbfc30d1-f4cc-4ace-a5a0-20a492d0eaa1' };
-    constructor(private apiFactory: ApiFactory) {
-        this._api = this.apiFactory.create(this._apiHost, { requestParameters: this._apiKey });
+    constructor(private apiFactory: ApiFactory, configurationService: ConfigurationService) {
+        this._api = this.apiFactory.create(configurationService.get('hubitat-api-host'), { requestParameters: { 'access_token': configurationService.get('hubitat-api-key') } });
     }
 
     getDevices(detailed: boolean = false): Promise<HubitatDevice[]> {

@@ -12,16 +12,11 @@ export class HubitatDeviceProvider extends DeviceProvider {
     constructor(private hubitatApi: DevicesService){
         super();
     }
-    devices(): Promise<Device[]> {
-        return this.hubitatApi.getDevices(true).then(devices=>{
+    load(id?: string){
+        this.hubitatApi.getDevices(true).then(devices=>{
             const filteredDevices = devices.map(y=>this.apiToProvider(y));
             this.devices$.drop(filteredDevices);
-            return filteredDevices;
         });
-    }
-
-    device(): Promise<Device>  {
-        throw new Error("Method not implemented.");
     }
 
     private apiToProvider(hubitatDevice: HubitatDevice): Device{
