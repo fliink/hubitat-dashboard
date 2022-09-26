@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Device } from 'apis/models/device';
 import { MakerApiService } from 'projects/dashboad-app/src/services/maker-api.service';
 import { RoomService } from 'projects/dashboad-app/src/services/room.service';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 import { combineLatest, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { AnyOnPipe } from '../../pipes/any-on.pipe';
@@ -17,8 +17,8 @@ export class RoomComponent implements OnInit {
 
 
   name: string = 'New Room';
-  devices$: Observable<HubitatDevice[]>;
-  selectedDevices: HubitatDevice[];
+  devices$: Observable<Device[]>;
+  selectedDevices: Device[];
   id: string;
   mode: string;
   someOn$: Observable<boolean>;
@@ -53,7 +53,7 @@ export class RoomComponent implements OnInit {
     });
   }
 
-  selectedUpdated(selected: HubitatDevice[]) {
+  selectedUpdated(selected: Device[]) {
     this.selectedDevices = selected;
   }
 
@@ -61,7 +61,7 @@ export class RoomComponent implements OnInit {
     const someOn = this.anyOnPipe.transform(this.selectedDevices);
     const filterValue = someOn ? 'on' : 'off';
     const value = someOn ? 'off' : 'on';
-    this.selectedDevices.filter(x=>x.attributes.switch == filterValue).forEach(x=>{
+    this.selectedDevices.filter(x=>x.attributes.power).forEach(x=>{
       this.commandService.emit(x, value, {
         attribute: 'switch', value
       });

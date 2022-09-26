@@ -1,10 +1,10 @@
 <div class="tile" *ngIf="config?.device" fxLayout="column">
-    <button fxFlex="0 1 0%" class="tile-title" (click)="activate()">{{config.name || config.device.label}}</button>
+    <button fxFlex="0 1 0%" class="tile-title" (click)="activate()">{{config.name || config.device.name}}</button>
     <div fxFlex="1 0 calc(100% - 8px)">
-        <app-light-tile *ngIf="config.device.capabilityLookup.Light" [device]="config.device"></app-light-tile>
-        <app-sensor-tile *ngIf="config.device.capabilityLookup.Sensor && !config.device.capabilityLookup.Thermostat"
+        <app-light-tile *ngIf="config.device.capabilities.light" [device]="config.device"></app-light-tile>
+        <app-sensor-tile *ngIf="config.device.capabilities.sensor && !config.device.capabilities.thermostat"
             [device]="config.device"></app-sensor-tile>
-        <app-thermostat-tile *ngIf="config.device.capabilityLookup.Thermostat" [device]="config.device">
+        <app-thermostat-tile *ngIf="config.device.capabilities.thermostat" [device]="config.device">
         </app-thermostat-tile>
     </div>
 </div>

@@ -4,26 +4,44 @@ import express from 'express';
 import { Express } from 'express';
 import { Zynject, Zynjectable } from "../core";
 import { ApiServiceProvider } from "./api-service-provider";
+import * as io from 'socket.io';
 
 @Zynjectable()
 export class ZynergyServer {
     app: Express;
-    
+
     constructor(@Zynject(ApiServiceProvider) private apiProviders: ApiServiceProvider[], private logger: Logger) {
     }
 
-    start(port: number){
+    start(port: number) {
         this.app = express();
+        this.app.use(this.cors);
         this.app.use(bodyParser.json());
-        this.app.use((req, res, next)=>{
-            this.logger.log(`API ${req.method} ${req.url}`, LogLevel.VERBOSE); 
+        this.app.use((req, res, next) => {
+            this.logger.log(`API ${req.method} ${req.url}`, LogLevel.VERBOSE);
             next();
         });
-        this.apiProviders.forEach(p=>{
+        this.apiProviders.forEach(p => {
             p.register(this.app);
         })
 
-        this.app.listen(port);
+
+        const server = this.app.listen(port);
+        const ioServer = new io.Server(server, {
+            allowEIO3: true,
+            cors: {
+              origin: ["http://192.168.1.55", "http://localhost:4200", "http://home.local/"],
+              methods: ["GET", "POST"],
+              credentials: true
+            }
+          })
+    }
+
+    cors(req: express.Request, res: express.Response, next: express.NextFunction) {
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        res.header('Access-Control-Allow-Origin', req.headers.origin);
+        res.header('Access-Control-Allow-Credentials', 'true');
+        next();
     }
 
 

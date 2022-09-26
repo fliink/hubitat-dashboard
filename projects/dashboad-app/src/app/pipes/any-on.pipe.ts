@@ -1,13 +1,13 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
+import { Device } from 'apis/models/device';
 
 @Pipe({
   name: 'anyOn'
 })
 export class AnyOnPipe implements PipeTransform {
 
-  transform(items: HubitatDevice[], ...args: unknown[]): boolean {
-    return !!items.find(x=>x.attributes.switch == 'on');
+  transform(items: Device[], ...args: unknown[]): boolean {
+    return !!items.find(x=>x.attributes.power);
   }
 
 }

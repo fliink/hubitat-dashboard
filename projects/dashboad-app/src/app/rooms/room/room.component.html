@@ -34,7 +34,7 @@
     <app-select-list [items]="devices$ | async" [template]="template" (onChange)="selectedUpdated($event)"
         [selected]="selectedDevices">
         <ng-template let-item="item" #template>
-            {{item.label}}
+            {{item.name}}
         </ng-template>
     </app-select-list>
 </div>

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Device } from 'apis/models/device';
 import { MakerApiService } from 'projects/dashboad-app/src/services/maker-api.service';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 
 @Component({
   selector: 'app-thermostat-tile',
@@ -9,7 +9,7 @@ import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 })
 export class ThermostatTileComponent implements OnInit {
 
-  @Input() device: HubitatDevice;
+  @Input() device: Device;
 
   constructor(private hubitatService: MakerApiService) { 
   }
@@ -18,12 +18,13 @@ export class ThermostatTileComponent implements OnInit {
   }
 
   adjustTemperature(amount){
-    const targetTemperature = Number(this.device.attributes.thermostatSetpoint) + amount;
-    if(this.device.attributes.thermostatMode === "heat"){
-      this.hubitatService.sendCommand(this.device.id, { setHeatingSetpoint: targetTemperature}).subscribe();
-    }else if (this.device.attributes.thermostatMode === "cool"){
-      this.hubitatService.sendCommand(this.device.id, { setCoolingSetpoint: targetTemperature}).subscribe();
-    }
+    //  TODO
+    // const targetTemperature = Number(this.device.attributes.thermostatSetpoint) + amount;
+    // if(this.device.attributes.thermostatMode === "heat"){
+    //   this.hubitatService.sendCommand(this.device.id, { setHeatingSetpoint: targetTemperature}).subscribe();
+    // }else if (this.device.attributes.thermostatMode === "cool"){
+    //   this.hubitatService.sendCommand(this.device.id, { setCoolingSetpoint: targetTemperature}).subscribe();
+    // }
   }
 
 }

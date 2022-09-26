@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
+import { Device } from 'apis/models/device';
 import { DeviceCommandService } from '../../../services/device-command.service';
 
 @Component({
@@ -9,14 +9,14 @@ import { DeviceCommandService } from '../../../services/device-command.service';
 })
 export class SwitchListItemComponent implements OnInit {
 
-  @Input() device: HubitatDevice;
+  @Input() device: Device;
   constructor(private commandService: DeviceCommandService) { }
 
   ngOnInit(): void {
   }
 
-  toggleSwitch(device: HubitatDevice){
-    var newValue = device.attributes.switch == 'on' ? 'off': 'on';
+  toggleSwitch(device: Device){
+    var newValue = device.attributes.power ? 'off': 'on';
     this.commandService.emit(device, newValue, { attribute: 'switch', value: newValue });
   }
 }

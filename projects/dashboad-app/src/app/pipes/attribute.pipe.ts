@@ -1,12 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
+import { Device } from 'apis/models/device';
 
 @Pipe({
   name: 'attribute'
 })
 export class AttributePipe implements PipeTransform {
 
-  transform(devices: HubitatDevice[], ...args: string[]): HubitatDevice[] {
+  transform(devices: Device[], ...args: any[]): Device[] {
     const attribute:string = args[0];
     const value:string = args[1];
 

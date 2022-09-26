@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
+import { Device } from 'apis/models/device';
 import { DeviceCommandService } from '../../services/device-command.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { DeviceCommandService } from '../../services/device-command.service';
 })
 export class DeviceListItemComponent implements OnInit {
 
-  @Input() device: HubitatDevice;
+  @Input() device: Device;
 
   constructor() { }
 

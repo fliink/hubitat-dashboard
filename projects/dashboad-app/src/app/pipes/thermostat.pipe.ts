@@ -1,12 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
+import { Device } from 'apis/models/device';
 
 @Pipe({
   name: 'thermostat'
 })
 export class ThermostatPipe implements PipeTransform {
 
-  transform(items: HubitatDevice[], ...args: unknown[]): HubitatDevice {
-    return items?.find(x=>x.capabilityLookup.Thermostat);
+  transform(items: Device[], ...args: unknown[]): Device {
+    return items?.find(x=>x.capabilities.thermostat);
   }
 }

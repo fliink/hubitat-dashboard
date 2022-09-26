@@ -17,13 +17,13 @@ export class FileDb {
         });
     }
 
-    save(data) {
+    save(data: any) {
         fs.outputFile('db.fb', JSON.stringify(data), x => {
             this.store2 = data;
         });
     }
 
-    store(path, data) {
+    store(path: string, data: any) {
         let ids = [];
         if (fs.existsSync(`data/${path}/index.json`)) {
             ids = JSON.parse(fs.readFileSync(`data/${path}/index.json`, 'utf-8'));
@@ -37,7 +37,7 @@ export class FileDb {
         fs.outputFileSync(`data/${path}/${data.id}.json`, JSON.stringify(data));
     }
 
-    get(path) {
+    get(path: string) {
         if (!fs.existsSync(`data/${path}/index.json`)) {
             return;
         }

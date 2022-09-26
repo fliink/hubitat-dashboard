@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { delay, map, mergeMap, share, tap } from 'rxjs/operators';
-import { DeviceCapabilities, HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 import { Socket } from 'ngx-socket-io';
 import { environment } from '../environments/environment';
 import { Dashboard } from 'projects/models/src/lib/dashboard-api/dashboard';

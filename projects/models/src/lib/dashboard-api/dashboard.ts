@@ -1,4 +1,4 @@
-import { HubitatDevice } from '../maker-api/device.model';
+import { Device } from "apis/models/device";
 
 export interface Dashboard {
     id: number;
@@ -12,7 +12,7 @@ export interface DashboardTile {
     id: number;
     type: string;
     name: string;
-    device: HubitatDevice;
+    device: Device;
     position: {
             left: number,
             top: number,

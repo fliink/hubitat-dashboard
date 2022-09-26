@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Device } from 'apis/models/device';
 import { MakerApiService } from 'projects/dashboad-app/src/services/maker-api.service';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 import { take } from 'rxjs/operators';
 import { Hsl } from '../../color-slider/color-slider.component';
 
@@ -11,7 +11,7 @@ import { Hsl } from '../../color-slider/color-slider.component';
 })
 export class LightTileComponent implements OnInit, OnChanges {
 
-  @Input() device!: HubitatDevice;
+  @Input() device!: Device;
   rgb: any;
   selectedEffect: { key: number, value: string };
 
@@ -19,12 +19,13 @@ export class LightTileComponent implements OnInit, OnChanges {
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.device?.currentValue) {
-      if (this.device.capabilityLookup.LightEffects) {
-        const selectedEffect = Object.entries(this.device.attributes.lightEffects).find(x => {
-          return x[1] === this.device.attributes.effectName;
-        });
-        this.selectedEffect = { key: Number(selectedEffect[1]), value: <string>selectedEffect[1] };
-      }
+      //  TODO
+      // if (this.device.capabilityLookup.LightEffects) {
+      //   const selectedEffect = Object.entries(this.device.attributes.lightEffects).find(x => {
+      //     return x[1] === this.device.attributes.effectName;
+      //   });
+      //   this.selectedEffect = { key: Number(selectedEffect[1]), value: <string>selectedEffect[1] };
+      // }
     }
   }
 
@@ -44,9 +45,9 @@ export class LightTileComponent implements OnInit, OnChanges {
   }
 
   setHsl(value: Hsl){
-    this.device.attributes.hue = value.hue;
-    this.device.attributes.saturation = 100 - Math.round(value.saturation);
-    this.hubitatService.sendCommand(this.device.id, { setSaturation: 100 - Math.round(value.saturation), setHue: Math.round(value.hue) }).pipe(take(1)).subscribe();
+    // this.device.attributes.hue = value.hue;
+    // this.device.attributes.saturation = 100 - Math.round(value.saturation);
+    // this.hubitatService.sendCommand(this.device.id, { setSaturation: 100 - Math.round(value.saturation), setHue: Math.round(value.hue) }).pipe(take(1)).subscribe();
   }
 
 }

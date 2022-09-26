@@ -3,7 +3,8 @@
         {{thermostat | temperature}}
     </div>
     <div fxLayout="row">
-        <div fxLayout="column" class="temperature-control" *ngIf="thermostat.attributes.thermostatMode !== 'cool'">
+        <!--//  TODO -->
+        <!-- <div fxLayout="column" class="temperature-control" *ngIf="thermostat.attributes.thermostatMode !== 'cool'">
             <button (click)="incrementTemperature(thermostat, 1, 'heat')">Up</button>
             <div>{{thermostat.attributes.heatingSetpoint | temperature}}</div>
             <button (click)="incrementTemperature(thermostat, -1, 'heat')">Down</button>
@@ -12,7 +13,7 @@
             <button (click)="incrementTemperature(thermostat, 1, 'cool')">Up</button>
             <div>{{thermostat.attributes.coolingSetpoint | temperature}}</div>
             <button (click)="incrementTemperature(thermostat, -1, 'cool')">Down</button>
-        </div>
+        </div> -->
 
     </div>
 </div>
@@ -21,8 +22,8 @@
         <div class="content">
             <div class="title">{{room.name}}</div>
             <div class="device-count">{{(room.devices).length}} devices</div>
-             <div class="light-count">{{(room.devices | isLight | attribute:'switch':'on').length}} lights on</div>
-             <div class="switch-count">{{(room.devices | isSwitch | attribute:'switch':'on').length}} switches on</div>
+             <div class="light-count">{{(room.devices | isLight | attribute:'power':true).length}} lights on</div>
+             <div class="switch-count">{{(room.devices | isSwitch | attribute:'power':true).length}} switches on</div>
              <div class="temperature">{{room.devices | temperature}}</div>
         </div>
         <div class="indicator" [style.background]="room.devices | colorAverage"></div>

@@ -1,6 +1,6 @@
 <div *ngIf="device">
-    <app-switch-list-item *ngIf="device.capabilityLookup.Switch && !device.capabilityLookup.Light" [device]="device"></app-switch-list-item>
-    <app-light-list-item *ngIf="device.capabilityLookup.Light" [device]="device"></app-light-list-item>
-    <app-sensor-list-item *ngIf="device.capabilityLookup.Sensor" [device]="device"></app-sensor-list-item>
-    <app-thermostat-list-item *ngIf="device.capabilityLookup.Thermostat && !device.capabilityLookup.Sensor" [device]="device"></app-thermostat-list-item>
+    <app-switch-list-item *ngIf="device.capabilities.switch && !device.capabilities.light" [device]="device"></app-switch-list-item>
+    <app-light-list-item *ngIf="device.capabilities.light" [device]="device"></app-light-list-item>
+    <app-sensor-list-item *ngIf="device.capabilities.sensor" [device]="device"></app-sensor-list-item>
+    <app-thermostat-list-item *ngIf="device.capabilities.thermostat && !device.capabilities.sensor" [device]="device"></app-thermostat-list-item>
 </div>

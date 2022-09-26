@@ -5,6 +5,7 @@ import { ZynergyServer } from "./server";
 import { DevicesApiServiceProvider } from "./devices-api-provider";
 import { LightsApiServiceProvider } from "./lights-api-provider";
 import { RoomsApiServiceProvider } from "./rooms-api-provider";
+import { ZynjectContainer } from "../core/zynject/container";
 
 Z.register([
     RoomsApiServiceProvider,

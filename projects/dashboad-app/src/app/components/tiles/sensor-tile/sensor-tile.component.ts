@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
+import { Device } from 'apis/models/device';
 
 @Component({
   selector: 'app-sensor-tile',
@@ -8,7 +8,7 @@ import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 })
 export class SensorTileComponent implements OnInit {
 
-  @Input() device: HubitatDevice;
+  @Input() device: Device;
 
   constructor() { }
 

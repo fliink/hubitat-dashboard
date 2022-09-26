@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Device } from 'apis/models/device';
 import { Room } from 'projects/models/src/lib/dashboard-api/room';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 import { Observable } from 'rxjs';
 import { MakerApiService } from '../../services/maker-api.service';
 import { RoomService } from '../../services/room.service';
@@ -13,7 +13,7 @@ import { RoomService } from '../../services/room.service';
 export class RoomsComponent implements OnInit {
 
   rooms$: Observable<Room[]>;
-  devices$: Observable<HubitatDevice[]>;
+  devices$: Observable<Device[]>;
   
   constructor(private roomService: RoomService, private makerApiSvc: MakerApiService) { 
     this.rooms$ = this.roomService.rooms$;

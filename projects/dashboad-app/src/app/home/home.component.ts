@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Room } from 'projects/models/src/lib/dashboard-api/room';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
+import { Device } from 'apis/models/device';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MakerApiService } from '../../services/maker-api.service';
 import { RoomService } from '../../services/room.service';
-import { ThermostatPipe } from '../pipes/thermostat.pipe';
 import { DeviceCommandService } from '../services/device-command.service';
 
 @Component({
@@ -15,7 +13,7 @@ import { DeviceCommandService } from '../services/device-command.service';
 })
 export class HomeComponent implements OnInit {
 
-  devices$: Observable<HubitatDevice[]>;
+  devices$: Observable<Device[]>;
   rooms$: Observable<any[]>;
 
   constructor(private makerApiSvc: MakerApiService, private deviceCommandService: DeviceCommandService, private roomService: RoomService) { 
@@ -34,7 +32,7 @@ export class HomeComponent implements OnInit {
     }));
   }
 
-  incrementTemperature(device: HubitatDevice, increment: number, mode: string): void{
+  incrementTemperature(device: Device, increment: number, mode: string): void{
     this.deviceCommandService.adjustTemperature(device, increment, mode);
   }
 

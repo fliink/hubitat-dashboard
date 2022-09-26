@@ -1,4 +1,3 @@
-import { type } from "os";
 import { Newable } from "./types/newable";
 import { zynjectKey } from "./zynject";
 
@@ -16,7 +15,7 @@ export class ZynjectContainer {
         }
 
         var proto = Reflect.getPrototypeOf(ctor);
-        const baseClass = Reflect.has(proto, 'prototype') ? proto as T : undefined;
+        const baseClass = Reflect.has(proto || {}, 'prototype') ? proto as T : undefined;
         const definition: RegistryEntry<T> = new RegistryEntry<T>(ctor, ctor, baseClass);
 
         //  Register type with base class
@@ -24,7 +23,7 @@ export class ZynjectContainer {
         existingBaseClasses.push(ctor);
         this._baseClasses.set(baseClass, existingBaseClasses);
 
-        
+
         this._mapping.set(definition.id, definition);
 
         return;
@@ -50,7 +49,7 @@ export class ZynjectContainer {
      * @returns New instance of requested Newable type
      */
     public static new<T extends Newable>(ctor: T): InstanceType<T> {
-        const paramsTypeMetadata = Reflect.getMetadata('design:paramtypes', ctor);
+        const paramsTypeMetadata = this.getMetadata(ctor);
         let zynjectedParameters: { type: Newable, index: number }[] = Reflect.getOwnMetadata(zynjectKey, ctor) || [];
         let singleton;
 
@@ -71,6 +70,11 @@ export class ZynjectContainer {
 
         return singleton;
     }
+
+    public static getMetadata<T extends Newable>(ctor: T): any{
+        let paramsTypeMetadata = Reflect.getMetadata('design:paramtypes', ctor);
+        return paramsTypeMetadata;
+    }
 }
 
 class RegistryEntry<T extends Newable> {
@@ -86,7 +90,8 @@ class RegistryEntry<T extends Newable> {
     extends?: T;
 
     get singleton(): InstanceType<T> {
-        return this._value || (this._value = ZynjectContainer.new(this.type))
+        const returnValue =  this._value || (this._value = ZynjectContainer.new(this.type));
+        return returnValue;
     };
 
     private _value: InstanceType<T>;

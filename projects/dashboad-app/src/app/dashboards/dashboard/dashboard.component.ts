@@ -1,9 +1,9 @@
 import { Component, ComponentFactoryResolver, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Device } from 'apis/models/device';
 import { DashboardService } from 'projects/dashboad-app/src/services/dashboard.service';
 import { MakerApiService } from 'projects/dashboad-app/src/services/maker-api.service';
 import { Dashboard, DashboardTile } from 'projects/models/src/lib/dashboard-api/dashboard';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
 import { combineLatest, forkJoin, Observable } from 'rxjs';
 import { filter, map, skipWhile, take } from 'rxjs/operators';
 import { DragPosition } from '../../models/position';
@@ -29,8 +29,8 @@ export class DashboardComponent implements OnInit {
   activeTemplateTile?: { element: HTMLElement, start: { row: number, column: number }, end?: { row: number, column: number } };
 
   editorActive: boolean = false;
-  devices$: Observable<HubitatDevice[]>;
-  selectedDevice: HubitatDevice;
+  devices$: Observable<Device[]>;
+  selectedDevice: Device;
   selectedCapability: string = '';
   deviceListVisible: boolean = false;
   capabilityListVisible: boolean = false;
@@ -136,10 +136,10 @@ export class DashboardComponent implements OnInit {
     this.activeTemplateTile.end = tile;
   }
 
-  selectDevice(device: HubitatDevice): void {
+  selectDevice(device: Device): void {
     this.selectedDevice = device;
     this.activeTile.device = this.selectedDevice;
-    this.activeTile.name = this.selectedDevice.label;
+    this.activeTile.name = this.selectedDevice.name;
   }
 
   selectCapability(capability: string): void {

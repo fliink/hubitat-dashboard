@@ -26,7 +26,7 @@
             <app-drop-list label="Select Device" [items]="devices$ | async" [selectedItem]="selectedDevice"
                 (changed)="selectDevice($event)">
                 <ng-template #itemTemplate let-item>
-                    {{item?.label}}
+                    {{item?.name}}
                 </ng-template>
             </app-drop-list>
         </div>
@@ -38,11 +38,12 @@
                     class="device-list">{{capability}}</div>
             </div> -->
 
+            <!-- TODO
             <app-drop-list label="Select Capability" [items]="selectedDevice.capabilities">
                 <ng-template #itemTemplate let-item>
                     {{item}}
                 </ng-template>
-            </app-drop-list>
+            </app-drop-list> -->
 
         </div>
         <button (click)="closePane()">Done</button>

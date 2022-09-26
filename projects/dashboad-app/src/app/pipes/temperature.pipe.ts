@@ -1,12 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { HubitatDevice } from 'projects/models/src/lib/maker-api/device.model';
+import { Device } from 'apis/models/device';
 
 @Pipe({
   name: 'temperature'
 })
 export class TemperaturePipe implements PipeTransform {
 
-  transform(value: HubitatDevice[] | HubitatDevice | string | number, ...args: unknown[]): string {
+  transform(value: Device[] | Device | string | number, ...args: unknown[]): string {
 
     if(!value){ return ''; }
     if(typeof(value) === 'string' || typeof(value) === 'number' ){
