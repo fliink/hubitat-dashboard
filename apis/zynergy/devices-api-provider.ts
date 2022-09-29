@@ -15,12 +15,19 @@ export class DevicesApiServiceProvider extends ApiServiceProvider {
         app.get('/devices', async (req, res) => {
             const filter = new QueryFilter(req.query as {[key: string]: any});
             this.deviceProviders.forEach(x=>x.load());
-            
+
             var ripple = Ripple.joinAll(this.deviceProviders.map(x=>x.devices$))
                 .react(x=>filter.apply(x))
                 .take(1);
 
             res.json(await ripple.promise());
+          });
+
+          app.post('/devices/:id', async (req, res) => {
+            const value = req.body;
+            
+
+            res.json(value);
           });
     }
 }

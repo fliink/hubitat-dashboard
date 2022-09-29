@@ -17,13 +17,10 @@ export class ZynergyServer {
         this.app = express();
         this.app.use(this.cors);
         this.app.use(bodyParser.json());
-        this.app.use((req, res, next) => {
-            this.logger.log(`API ${req.method} ${req.url}`, LogLevel.VERBOSE);
-            next();
-        });
+        this.app.use((a,b,c)=>this.log(a,b,c));
         this.apiProviders.forEach(p => {
             p.register(this.app);
-        })
+        });
 
 
         const server = this.app.listen(port);
@@ -37,10 +34,15 @@ export class ZynergyServer {
           })
     }
 
-    cors(req: express.Request, res: express.Response, next: express.NextFunction) {
+    private cors(req: express.Request, res: express.Response, next: express.NextFunction) {
         res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         res.header('Access-Control-Allow-Origin', req.headers.origin);
         res.header('Access-Control-Allow-Credentials', 'true');
+        next();
+    }
+
+    private log(req: express.Request, res: express.Response, next: express.NextFunction) {
+        this.logger.log(`API ${req.method} ${req.url}`, LogLevel.VERBOSE);
         next();
     }
 

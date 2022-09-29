@@ -45,6 +45,7 @@ import { HomeComponent } from './home/home.component';
 import { TemperaturePipe } from './pipes/temperature.pipe';
 import { AttributePipe } from './pipes/attribute.pipe';
 import { ColorAveragePipe } from './pipes/color-average.pipe';
+import { ColorPipe } from './pipes/color.pipe';
 
 @NgModule({
   declarations: [
@@ -80,6 +81,7 @@ import { ColorAveragePipe } from './pipes/color-average.pipe';
     TemperaturePipe,
     AttributePipe,
     ColorAveragePipe,
+    ColorPipe,
   ],
   imports: [
     BrowserModule,

@@ -31,8 +31,10 @@ export class Z{
      * Registers implemented classes since implementations are never referenced directly, they have to be explicitly registered.
      * @param constructor Class(es) to register
      */
-    static register<T extends Newable>(constructor: T | T[]) {
-        
+    static register<T extends Newable>(constructor: T[]) {
+        // constructor.forEach(x=>{
+        //     ZynjectContainer.register(x);
+        // });
     }
     
 }

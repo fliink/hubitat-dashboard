@@ -11,22 +11,34 @@
     <div>
         <button (click)="toggleAll()">Turn all lights {{(someOn$ | async) ? 'off' : 'on'}}</button>
     </div>
-    <div *ngIf="(selectedDevices | isLight).length" class="device-list">
+    <div *ngIf="(selectedDevices | isLight).length">
         <div class="title">Lights</div>
-        <div *ngFor="let device of selectedDevices | isLight">
-            <app-device-list-item [device]="device"></app-device-list-item>
+        <div class="devices list">
+            <button *ngFor="let device of selectedDevices | isLight" class="device">
+                <div class="content">
+                    <app-device-list-item [device]="device"></app-device-list-item>
+                </div>
+            </button>
         </div>
     </div>
-    <div *ngIf="(selectedDevices | isSensor).length" class="device-list">
+    <div *ngIf="(selectedDevices | isSensor).length" >
         <div class="title">Sensors</div>
-        <div *ngFor="let device of selectedDevices | isSensor">
-            <app-device-list-item [device]="device"></app-device-list-item>
+        <div class="devices list">
+            <button *ngFor="let device of selectedDevices | isSensor" class="device">
+                <div class="content">
+                    <app-device-list-item [device]="device"></app-device-list-item>
+                </div>
+            </button>
         </div>
     </div>
-    <div *ngIf="(selectedDevices | isSwitch).length" class="device-list">
+    <div *ngIf="(selectedDevices | isSwitch).length" >
         <div class="title">Switches</div>
-        <div *ngFor="let device of selectedDevices | isSwitch">
-            <app-device-list-item [device]="device"></app-device-list-item>
+        <div class="devices list">
+            <button *ngFor="let device of selectedDevices | isSwitch" class="device">
+                <div class="content">
+                    <app-device-list-item [device]="device"></app-device-list-item>
+                </div>
+            </button>
         </div>
     </div>
 </div>

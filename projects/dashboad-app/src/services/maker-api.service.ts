@@ -1,3 +1,4 @@
+import { state } from '@angular/animations';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Device } from 'apis/models/device';
@@ -78,6 +79,11 @@ export class MakerApiService {
             return forkJoin(requests);
         }
 
+    }
 
+    
+
+    state(device: Partial<Device>) {
+        return this.http.post<Device>(`${this.apiHost}/devices/${device.id}`, device);
     }
 }

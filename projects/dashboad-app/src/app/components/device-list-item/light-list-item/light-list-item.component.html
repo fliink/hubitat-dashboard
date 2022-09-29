@@ -1,5 +1,6 @@
 <div class="device-list-item">
-    <div>{{device.name}}</div>
-    <div><button (click)="toggleLight(device)">{{device.attributes.power ? 'on' : 'off'}}</button>
+    <div class="title">{{device.name}}</div>
+    <div><button class="power" (click)="toggleLight(device)">{{device.attributes.power ? 'on' : 'off'}}</button>
     </div>
+    <div class="indicator" [style.background-color]="device | color"></div>
 </div>

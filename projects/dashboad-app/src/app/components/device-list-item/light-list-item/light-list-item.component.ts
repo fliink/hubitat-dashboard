@@ -17,8 +17,8 @@ export class LightListItemComponent implements OnInit {
   }
 
   toggleLight(device: Device){
-    var newValue = device.attributes.power ? 'off': 'on';
-    this.commandService.emit(device, newValue, { attribute: 'switch', value: newValue });
+    const power = !device.attributes.power;
+    this.commandService.state({ id: device.id, attributes: { power } });
   }
 
 }

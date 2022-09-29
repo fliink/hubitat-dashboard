@@ -1,7 +1,25 @@
 .device-list-item{
-    display: flex;
-    flex-direction: row;
-    :first-child{
-        flex-grow: 1;
-    }
+        text-shadow: 0 0 1px #555;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        display: grid;
+        line-height: 1.5em;
+        grid-auto-columns: 80px auto auto;
+        grid-template: 
+        'title  title power' auto;
+        text-align: left;
+        padding: 10px;
+
+        .title {
+            font-size: var(--section-title-font-size);
+            grid-area: title;
+        }
+
+        .power {
+            font-size: var(--section-title-font-size);
+            grid-area: power;
+        }
 }

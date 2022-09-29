@@ -15,14 +15,6 @@ export class LightsApiServiceProvider extends ApiServiceProvider {
     }
 
     register(app: Express) {
-        app.get(`${this._endpoint}`, async (req, res) => {
-            const filter = new QueryFilter(req.query as {[key: string]: any});
-            this.deviceProviders.forEach(x=>x.load());
-            Ripple.joinAll(this.deviceProviders.map(x=>x.devices$)).react(x=>{
-                return res.json(x);
-            });
-        });
-
         app.post(`${this._endpoint}/:id`, async (req, res) => {
             const state = req.body as SetLightState;
             console.log(state);

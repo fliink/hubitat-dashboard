@@ -13,6 +13,10 @@ export class DeviceCommandService {
     this.makerService.sendCommand(device.id, command, emitOnSuccess).subscribe();
   }
 
+  state(device: Partial<Device>): void{
+    this.makerService.state(device).subscribe();
+  }
+
   adjustTemperature(device: Device, amount: number, mode?: string){
     const targetTemperature = Number(device.attributes.temperature) + amount;
     //  TODO
