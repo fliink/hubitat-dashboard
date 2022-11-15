@@ -1,0 +1,11 @@
+<div class="slider-container">
+    <div class="slider-track" #slidertrack>
+
+    </div>
+    <div class="slider-handle" [ngStyle]="{left: 'calc(' + value + '% - 5px)'}"
+        h-events 
+        (hDragStart)="handleDragStart($event)" 
+        (hDragEnd)="handleDragEnd($event)" 
+        (hDragMove)="handleDragMove($event)"
+         #sliderhandle></div>
+</div>

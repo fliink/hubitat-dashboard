@@ -21,8 +21,11 @@ export class MakerApiService {
 
     constructor(private http: HttpClient, private socket: Socket) {
         this._devices = {};
-        this.socket.on('message', (x: { deviceId: string, value: any, name: string }) => {
-            this._devices[x.deviceId].attributes[x.name] = x.value;
+        this.socket.on('device-update', (x: Device[]) => {
+            x.forEach(update=>{
+            console.log(update);
+            this._devices[update.id] = update;
+            })
             this._deviceMap.next(this._devices);
         });
 
@@ -84,6 +87,9 @@ export class MakerApiService {
     
 
     state(device: Partial<Device>) {
-        return this.http.post<Device>(`${this.apiHost}/devices/${device.id}`, device);
+        const time = Date.now();
+        return this.http.post<Device>(`${this.apiHost}/devices/${device.id}`, device).pipe(tap(x=>{
+            console.log('request ran in ', Date.now() - time, 'ms')
+        }));
     }
 }

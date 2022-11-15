@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { RGB } from 'apis/core/color/rgb';
 import { Device } from 'apis/models/device';
 import { MakerApiService } from 'projects/dashboad-app/src/services/maker-api.service';
 import { take } from 'rxjs/operators';
-import { Hsl } from '../../color-slider/color-slider.component';
 
 @Component({
   selector: 'app-light-tile',
@@ -44,7 +44,7 @@ export class LightTileComponent implements OnInit, OnChanges {
     this.hubitatService.sendCommand(this.device.id, $event ? 'off' : 'on').pipe(take(1)).subscribe();
   }
 
-  setHsl(value: Hsl){
+  setHsl(value: RGB){
     // this.device.attributes.hue = value.hue;
     // this.device.attributes.saturation = 100 - Math.round(value.saturation);
     // this.hubitatService.sendCommand(this.device.id, { setSaturation: 100 - Math.round(value.saturation), setHue: Math.round(value.hue) }).pipe(take(1)).subscribe();

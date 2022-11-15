@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { DragPosition, DragPositionEvent } from '../../models/position';
@@ -8,9 +8,10 @@ import { DragPosition, DragPositionEvent } from '../../models/position';
   templateUrl: './button-slider.component.html',
   styleUrls: ['./button-slider.component.scss']
 })
-export class ButtonSliderComponent implements OnInit {
+export class ButtonSliderComponent implements OnInit, OnChanges {
 
   active: boolean = false;
+  cssBackgroundColor: string = 'rgba(255,255,255, 1)';
   private debouncer: Subject<number> = new Subject<number>();
 
 
@@ -30,9 +31,24 @@ export class ButtonSliderComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+
+    this.updateCssValue(this.value);
     this.debouncer.pipe(debounceTime(200)).subscribe(x => {
       this.changed.next(x);
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.value?.currentValue) {
+      if (!this.active) {
+        this.updateCssValue(changes.value?.currentValue || 0);
+      }
+    }
+  }
+
+  private updateCssValue(level: number){
+    const cssLevel = 255 * (level/100);
+    this.cssBackgroundColor = `rgba(${cssLevel}, ${cssLevel}, ${cssLevel}, 1)`;
   }
 
   handleDragStart($event: DragPosition) {
@@ -41,7 +57,7 @@ export class ButtonSliderComponent implements OnInit {
 
   handleClick($event){
     this.on = !this.on;
-    this.toggle.next(!this.on);
+    this.toggle.next(this.on);
   }
 
   handleDragEnd($event: DragPosition) {

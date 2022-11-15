@@ -7,7 +7,7 @@ import { Device } from 'apis/models/device';
 export class IsSensorPipe implements PipeTransform {
 
   transform(items: Device[], ...args: unknown[]): Device[] {
-    return items.filter(x=>x.capabilities.sensor);
+    return items?.filter(x=>x.capabilities.sensor);
   }
 
 }

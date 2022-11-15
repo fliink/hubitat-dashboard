@@ -4,6 +4,8 @@
     background-color: grey;
     border-radius: 50%;
     touch-action: none;
+    transition: all 500ms;
+    box-shadow: 0px 0px 5px black;
 }
 
 .slider-track {
@@ -20,9 +22,11 @@
         hsl(300, 100, 50),
         hsl(360, 100, 50)
     );
+    right: 0px;
     display: none;
     border-radius: 15px;
     box-shadow: 0px 0px 3px black;
+    z-index: 1000;
 
     .lightness-gradient {
         pointer-events: none;

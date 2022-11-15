@@ -1,5 +1,5 @@
 import { ApiService, ApiServiceOptions } from "./api.service";
-import { HttpService } from "./http.service";
+import { HttpService } from "./http/http.service";
 import { Zynjectable } from "./zynject/zynject";
 
 @Zynjectable()

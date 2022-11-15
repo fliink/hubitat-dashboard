@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { RGB } from 'apis/core/color/rgb';
 import { Device } from 'apis/models/device';
 import { DeviceCommandService } from '../../../services/device-command.service';
 
@@ -16,9 +17,16 @@ export class LightListItemComponent implements OnInit {
     
   }
 
-  toggleLight(device: Device){
-    const power = !device.attributes.power;
-    this.commandService.state({ id: device.id, attributes: { power } });
+  toggleLight(power: boolean){
+    this.commandService.state({ id: this.device.id, attributes: { power } });
+  }
+
+  setColor(rgb: RGB){
+    this.commandService.state({ id: this.device.id, attributes: { rgb } });
+  }
+
+  setLevel(level: number){
+    this.commandService.state({ id: this.device.id, attributes: { level } });
   }
 
 }

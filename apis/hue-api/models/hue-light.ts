@@ -6,7 +6,7 @@ export interface HueLight {
     owner: { rid: string, rtype: string },
     metadata: { name: string, archetype: string },
     on: { on: boolean },
-    dimming: { brightness: number, min_dim_level: number },
+    dimming: { brightness: number, min_dim_level?: number },
     dimming_delta: any,
     color_temperature: {
         mirek: number, 
@@ -18,8 +18,8 @@ export interface HueLight {
     },
     color: {
         xy: XY, 
-        gamut: Gamut,
-        gamut_type: 'A' | 'B' | 'C'
+        gamut?: Gamut,
+        gamut_type?: 'A' | 'B' | 'C'
     },
     color_temperature_delta: any,
     product_data: {

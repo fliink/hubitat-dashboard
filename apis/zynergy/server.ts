@@ -9,7 +9,7 @@ import * as io from 'socket.io';
 @Zynjectable()
 export class ZynergyServer {
     app: Express;
-
+    ioServer: io.Server;
     constructor(@Zynject(ApiServiceProvider) private apiProviders: ApiServiceProvider[], private logger: Logger) {
     }
 
@@ -18,20 +18,25 @@ export class ZynergyServer {
         this.app.use(this.cors);
         this.app.use(bodyParser.json());
         this.app.use((a,b,c)=>this.log(a,b,c));
-        this.apiProviders.forEach(p => {
-            p.register(this.app);
-        });
 
 
         const server = this.app.listen(port);
-        const ioServer = new io.Server(server, {
+        this.ioServer = new io.Server(server, {
             allowEIO3: true,
             cors: {
               origin: ["http://192.168.1.55", "http://localhost:4200", "http://home.local/"],
               methods: ["GET", "POST"],
               credentials: true
             }
-          })
+          });
+
+          this.apiProviders.forEach(p => {
+            p.register(this.app, this.ioServer);
+        });
+    }
+
+    private emit(type: string, data: any){
+        this.ioServer.emit('message', data);
     }
 
     private cors(req: express.Request, res: express.Response, next: express.NextFunction) {

@@ -1,4 +1,5 @@
 <div class="slider-handle"
+[style.backgroundColor]="cssBackgroundColor"
 h-events 
 (hDragStart)="handleDragStart($event)" 
 (hClick)="handleClick($event)" 
@@ -7,6 +8,6 @@ h-events
 
 
 </div>
-<div class="slider-track" [ngClass]="{active: active}" [style.top]="trackAnchor" #track>
-    <div class="slider-thing" [style.bottom]="position" #thing></div>
+<div class="slider-track" [ngClass]="{active: active}" [style.top]="trackAnchor"  #track>
+    <div class="slider-thing" [style.bottom]="position"  #thing></div>
 </div>

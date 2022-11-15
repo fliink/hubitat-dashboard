@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { RGB } from 'apis/core/color/rgb';
 import { Device } from 'apis/models/device';
 import { MakerApiService } from 'projects/dashboad-app/src/services/maker-api.service';
 import { RoomService } from 'projects/dashboad-app/src/services/room.service';
@@ -28,7 +29,7 @@ export class RoomComponent implements OnInit {
     this.makerService.loadDevices();
     this.roomService.load();
 
-    combineLatest([route.params.pipe(map(x => x['id'])), this.roomService.rooms$, this.devices$]).pipe(take(1)).subscribe(([id, rooms, devices]) => {
+    combineLatest([route.params.pipe(map(x => x['id'])), this.roomService.rooms$, this.devices$]).subscribe(([id, rooms, devices]) => {
       if (id == 'new') {
         this.mode = 'Edit';
         return;
@@ -53,18 +54,23 @@ export class RoomComponent implements OnInit {
     });
   }
 
+  identifier(index: number, item: Device){
+    return item.id;
+  }
+
   selectedUpdated(selected: Device[]) {
     this.selectedDevices = selected;
   }
 
+  setColor(rgb: RGB){
+
+  }
+
   toggleAll(){
     const someOn = this.anyOnPipe.transform(this.selectedDevices);
-    const filterValue = someOn ? 'on' : 'off';
-    const value = someOn ? 'off' : 'on';
     this.selectedDevices.filter(x=>x.attributes.power).forEach(x=>{
-      this.commandService.emit(x, value, {
-        attribute: 'switch', value
-      });
+      x.attributes.power = !someOn;
+      this.commandService.state(x);
     });
   }
 

@@ -159,6 +159,39 @@ export function RGBtoXY(red: number, green: number, blue: number, gamut?: Gamut,
         return xy;
 }
 
+export function HSVtoRGB(hsv: {hue: number, saturation: number, vibrance: number}){
+    const s = hsv.saturation/100;
+    const v = hsv.vibrance/100;
+    const C = s * v;
+   // float X = C*(1-    fabs(fmod(H/60.0, 2)-1));
+    const X = C*(1-Math.abs((hsv.hue/60.0) % 2)-1);
+    const m = v-C;
+    let r:number ,g: number,b: number;
+    if(hsv.hue >= 0 && hsv.hue < 60){
+        r = C, g = X, b = 0;
+    }
+    else if(hsv.hue >= 60 && hsv.hue < 120){
+        r = X, g = C, b = 0;
+    }
+    else if(hsv.hue >= 120 && hsv.hue < 180){
+        r = 0, g = C, b = X;
+    }
+    else if(hsv.hue >= 180 && hsv.hue < 240){
+        r = 0, g = X, b = C;
+    }
+    else if(hsv.hue >= 240 && hsv.hue < 300){
+        r = X, g = 0, b = C;
+    }
+    else{
+        r = C, g = 0, b = X;
+    }
+    return {
+        r: r+m,
+        g: g+m,
+        b: b+m
+    }
+}
+
 function getColorPointsForModel(model?: string): Gamut {
     const hueBulbs = ["LCT001", "LCT002", "LCT003"];
     const livingcolors = [

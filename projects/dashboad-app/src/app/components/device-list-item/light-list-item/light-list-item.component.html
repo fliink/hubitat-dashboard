@@ -1,6 +1,6 @@
 <div class="device-list-item">
     <div class="title">{{device.name}}</div>
-    <div><button class="power" (click)="toggleLight(device)">{{device.attributes.power ? 'on' : 'off'}}</button>
-    </div>
     <div class="indicator" [style.background-color]="device | color"></div>
+    <app-horizontal-slider [value]="device.attributes.level" (changed)="setLevel($event)"></app-horizontal-slider>
+    <app-color-slider (changed)="setColor($event)" (toggled)="toggleLight($event)" [on]="device.attributes.power" [value]="device.attributes.rgb" [minimum]="0" [maximum]="100"></app-color-slider>
 </div>

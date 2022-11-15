@@ -6,8 +6,8 @@ import { DeviceProvider } from "../providers/device-provider";
 
 @Zynjectable()
 export class HubitatDeviceProvider extends DeviceProvider {
+
     providerName: string = 'hubitat';
-    devices$: Ripple<Device[]> = new Ripple<Device[]>();
 
     constructor(private hubitatApi: DevicesService){
         super();
@@ -17,6 +17,10 @@ export class HubitatDeviceProvider extends DeviceProvider {
             const filteredDevices = devices.map(y=>this.apiToProvider(y));
             this.devices$.drop(filteredDevices);
         });
+    }
+
+    update(state: Partial<Device>): Ripple<void> {
+        throw new Error("Method not implemented.");
     }
 
     private apiToProvider(hubitatDevice: HubitatDevice): Device{

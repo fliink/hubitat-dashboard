@@ -6,4 +6,17 @@
     left: 0%;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
+    transition: all 500ms;
+}
+
+app-horizontal-slider {
+    position: absolute;
+    bottom: 0%;
+    right: 0%;
+    left: 0%;
+}
+
+app-color-slider{
+    grid-area: power;
+    justify-self: end;
 }

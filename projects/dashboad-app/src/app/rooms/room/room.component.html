@@ -3,25 +3,42 @@
     <input *ngIf="mode == 'Edit'" #dashboardname [value]="name" placeholder="Room Name"
         (input)="name = $event.target['value']">
     <span class="title" *ngIf="mode == 'Display'">{{name}}
-    </span><button *ngIf="mode == 'Edit'" (click)="save()">Save Room</button><button
+    </span><button *ngIf="mode == 'Edit'" (click)="save()">Save Room</button>
+    <div fxLayout="row" *ngIf="(selectedDevices | isSensor) as thermostat" class="thermostat">
+        <div class="temperature-reading">
+            {{thermostat | temperature}}
+        </div>
+    </div><button
         (click)="mode = (mode == 'Edit' ? 'Display' : 'Edit')">Edit
         Room</button>
 </div>
 <div *ngIf="mode == 'Display'">
-    <div>
-        <button (click)="toggleAll()">Turn all lights {{(someOn$ | async) ? 'off' : 'on'}}</button>
-    </div>
+
+
     <div *ngIf="(selectedDevices | isLight).length">
-        <div class="title">Lights</div>
+        <div class="section-title" [style.backgroundColor]="selectedDevices | colorAverage">
+            <app-color-slider 
+                
+                (changed)="setColor($event)" 
+                (toggled)="toggleAll()" 
+                [on]="selectedDevices | anyOn" 
+                [minimum]="0" 
+                [maximum]="100"></app-color-slider>
+
+            <div class="title">Lights</div>
+            <div>
+                <button (click)="toggleAll()">Turn all lights {{(someOn$ | async) ? 'off' : 'on'}}</button>
+            </div>
+        </div>
         <div class="devices list">
-            <button *ngFor="let device of selectedDevices | isLight" class="device">
+            <button *ngFor="let device of selectedDevices | isLight; trackBy: identifier" class="device">
                 <div class="content">
                     <app-device-list-item [device]="device"></app-device-list-item>
                 </div>
             </button>
         </div>
     </div>
-    <div *ngIf="(selectedDevices | isSensor).length" >
+    <div *ngIf="(selectedDevices | isSensor).length">
         <div class="title">Sensors</div>
         <div class="devices list">
             <button *ngFor="let device of selectedDevices | isSensor" class="device">
@@ -31,7 +48,7 @@
             </button>
         </div>
     </div>
-    <div *ngIf="(selectedDevices | isSwitch).length" >
+    <div *ngIf="(selectedDevices | isSwitch).length">
         <div class="title">Switches</div>
         <div class="devices list">
             <button *ngFor="let device of selectedDevices | isSwitch" class="device">

@@ -1,5 +1,3 @@
-import { resolve } from "path";
-
 export class Ripple<T> {
     private _value?: T;
     private _downstream: Ripple<any>[] = [];
@@ -13,8 +11,18 @@ export class Ripple<T> {
         return this._closed;
     }
 
-    constructor(value?: T) {
-        this._value = value;
+    get value() {
+        return this._value;
+    }
+    constructor(value?: T | Promise<T>) {
+        if (value !== undefined && value instanceof Promise) {
+            value.then(x => {
+                this.drop(x);
+                this.resolve(x);
+            });
+        } else {
+            this._value = value;
+        }
     }
 
     drop(value: T) {
@@ -22,25 +30,38 @@ export class Ripple<T> {
     }
 
     protected _drop(value: any) {
-        if (this._closed) throw Error('Ripple is closed');
         this._value = value;
         this._downstream.forEach(ds => ds.drop(value));
 
         // Removed closed downstream ripples
-        this._downstream = this._downstream.filter(x=>!x._closed);
+        this._downstream = this._downstream.filter(x => !x._closed);
     }
 
-    react<R>(callback: (val: T) => R): Ripple<T> {
-        if (this._closed) throw Error('Ripple is closed');
-
+    react<R>(callback: (val: T) => R): Ripple<R> {
         const ripple = new RippleReact<T, R>(callback);
         this._downstream.push(ripple);
+        if (this._value) {
+            ripple._drop(this._value);
+        }
+        return ripple;
+    }
+
+    chain<R extends Ripple<any | void>, U extends ValueType<R>>(callback: (val: T) => R): Ripple<U> {
+        const ripple = new RippleChain<T, R, U>(callback);
+
+        this._downstream.push(ripple);
+        if (this._value) {
+            ripple._drop(this._value);
+        }
         return ripple;
     }
 
     take(howMany: number) {
         const ripple = new RippleTake<T>(howMany);
         this._downstream.push(ripple);
+        if (this._value) {
+            ripple.drop(this._value);
+        }
         return ripple;
     }
 
@@ -48,6 +69,7 @@ export class Ripple<T> {
         const promise = new Promise<T>((resolve, reject) => {
             this._promiseHandlers.push({ resolve, reject });
         });
+        if (this._value) { this.resolve(this._value); }
         return promise;
     }
 
@@ -67,16 +89,21 @@ export class Ripple<T> {
         this.close();
     }
 
-    static all<T>(ripples: Array<Ripple<T>>): Ripple<Array<T | undefined>> {
-        const combined = new Ripple<Array<T | undefined>>();
+    static all<T extends Ripple<any>>(ripples: T[]): Ripple<ValueType<T>[]> {
+        const combined = new Ripple<ValueType<T>[]>();
+        let count = 0;
+        const result: unknown[] = [];
         for (var ripple of ripples) {
             ripple.take(1).react(x => {
-                const values = ripples.map(y => y._value);
-                combined.drop(values);
+                if (++count === ripples.length) {
+                    combined.drop(ripples.map(y => y._value));
+                }
             });
         }
         return combined;
     }
+
+
 
     static joinAll<T>(ripples: Array<Ripple<T[]>>): Ripple<T[]> {
         const combined = new Ripple<T[]>();
@@ -85,8 +112,22 @@ export class Ripple<T> {
         for (var ripple of ripples) {
             ripple.take(1).react(x => {
                 values.push(...x);
-                if(++count === ripples.length){
+                if (++count === ripples.length) {
                     combined.drop(values);
+                }
+            });
+        }
+        return combined;
+    }
+
+    static latest<T extends Ripple<any>>(ripples: T[]): Ripple<ValueType<T>[]> {
+        const combined = new Ripple<ValueType<T>[]>();
+        let dropped = false;
+        for (var ripple of ripples) {
+            ripple.react(x => {
+                if (dropped || ripples.every(r => !!r._value)) {
+                    dropped = true;
+                    combined.drop(ripples.map(y => y._value));
                 }
             });
         }
@@ -111,17 +152,17 @@ class RippleTake<T> extends Ripple<T>{
     }
 }
 
-class RippleReact<T, R> extends Ripple<T>{
+class RippleReact<Source, Target> extends Ripple<Target>{
 
-    private _callback: (val: T) => R;
-    constructor(callback: (value: T) => R) {
+    private _callback: (value: Source) => Target;
+    constructor(callback: (value: Source) => Target) {
         super();
         this._callback = callback;
     }
 
-    drop(value: T): void {
+    _drop(value: Source): void {
         const newValue = this._callback(value);
-        this._drop(newValue);
+        super._drop(newValue);
     }
 
     close() {
@@ -129,5 +170,36 @@ class RippleReact<T, R> extends Ripple<T>{
         this._callback = () => <any>undefined;
     }
 }
+
+class RippleChain<Source, Target extends Ripple<unknown> | void, A extends ValueType<Target>> extends Ripple<A>{
+
+    private _callback: (value: Source) => Target | void;
+    constructor(callback: (value: Source) => Target | void) {
+        super();
+        this._callback = callback;
+    }
+
+    _drop(value: Source): void {
+
+        const newValue = this._callback(value);
+
+        if (newValue) {
+            newValue.react(x => {
+                super._drop(x);
+            });
+        }
+    }
+
+    close() {
+        super.close();
+        this._callback = () => <any>undefined;
+    }
+}
+
+type ValueType<T> = T extends Ripple<infer U> ? U : never;
+
+
+
+
 
 

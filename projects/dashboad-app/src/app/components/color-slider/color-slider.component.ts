@@ -1,13 +1,9 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { HSVtoRGB } from 'apis/core/color/color-converter';
+import { RGB } from 'apis/core/color/rgb';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { DragPosition, DragPositionEvent } from '../../models/position';
-
-export interface Hsl {
-  hue: number;
-  saturation: number;
-  lightness: number;
-}
 
 @Component({
   selector: 'app-color-slider',
@@ -17,22 +13,30 @@ export interface Hsl {
 export class ColorSliderComponent implements OnInit, OnChanges {
 
   active: boolean = false;
-  private debouncer: Subject<Hsl> = new Subject<Hsl>();
+  private debouncer: Subject<RGB> = new Subject<RGB>();
 
 
   @ViewChild('thing') thing: ElementRef<HTMLDivElement>;
   @ViewChild('track') track: ElementRef<HTMLDivElement>;
 
+  @Input() on: boolean = false;
   @Input() minimum: number = 50;
   @Input() maximum: number = 100;
-  @Input() value: Hsl = {
-    hue: 0,
-    lightness: 0,
-    saturation: 0
+  @Input() value: RGB = {
+    r: 0,
+    g: 0,
+    b: 0,
+  };
+
+  workingValue: RGB = {
+    r: 0,
+    g: 0,
+    b: 0,
   };
 
   @Input() cssValue: string = '#000';
-  @Output() changed: EventEmitter<Hsl> = new EventEmitter();
+  @Output() changed: EventEmitter<RGB> = new EventEmitter();
+  @Output() toggled: EventEmitter<boolean> = new EventEmitter();
 
   position: {
     left?: string;
@@ -43,19 +47,27 @@ export class ColorSliderComponent implements OnInit, OnChanges {
   constructor() { }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value?.currentValue) {
-      const cssValue = {
-        hue: (this.value.hue / 100) * 360,
-        saturation: this.value.saturation,
-        lightness: 100
-      };
-      this.cssValue = `hsl(${cssValue.hue},100%,${100 - cssValue.saturation / 2}%)`;
+      if (!this.active) {
+        const rgb = changes.value?.currentValue;
+        this.workingValue = rgb;
+        this.updateCssValue(rgb);
+      }
     }
+  }
+
+  private updateCssValue(rgb: RGB) {
+    this.cssValue = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
   }
 
   ngOnInit(): void {
     this.debouncer.pipe(debounceTime(200)).subscribe(x => {
       this.changed.next(x);
     });
+  }
+
+  handleClick($event) {
+    this.on = !this.on;
+    this.toggled.next(this.on);
   }
 
   handleDragStart($event: DragPosition) {
@@ -72,11 +84,11 @@ export class ColorSliderComponent implements OnInit, OnChanges {
     const rect = this.track.nativeElement.getBoundingClientRect();
     let newY = 0;
     let newX = 0;
-    if (!this.trackAnchor) {
-      const bottom = (rect.height - rect.height * (this.value.lightness - this.minimum) / (this.maximum - this.minimum))
-      const left = (rect.width - rect.width * (this.value.hue - this.minimum) / (this.maximum - this.minimum))
-      this.trackAnchor = `${$event.y - bottom}px`;
-    }
+    // if (!this.trackAnchor) {
+    //   const bottom = (rect.height - rect.height * (this.value.lightness - this.minimum) / (this.maximum - this.minimum))
+    //   const left = (rect.width - rect.width * (this.value.hue - this.minimum) / (this.maximum - this.minimum))
+    //   this.trackAnchor = `${$event.y - bottom}px`;
+    // }
 
 
     if ($event.y >= rect.bottom) {
@@ -102,12 +114,39 @@ export class ColorSliderComponent implements OnInit, OnChanges {
       this.position.left = `${rect.left + $event.x}px`;
     }
 
-    if (this.value.saturation !== newY || this.value.hue !== newX) {
-      this.value.saturation = newY;
-      this.value.hue = newX;
-      this.debouncer.next(this.value);
+
+
+
+    const hue = newX * 3.6 % 360;
+    const rgb = this.toRgb(hue);
+
+    if (this.value.r !== rgb.r || this.value.g !== rgb.g || this.value.b !== rgb.b) {
+      this.workingValue = rgb;
+      this.updateCssValue(rgb);
+      this.debouncer.next(rgb);
     }
 
+  }
+
+  private toRgb(hue: number): RGB {
+    let r = 0, g = 0, b = 0;
+    if (240 < hue || hue < 120) {
+      r = Math.min(255 * (1 - Math.abs((((hue + 120) % 360) - 120) / 120)) * 2, 255);
+    }
+
+    if (0 < hue && hue < 240) {
+      g = Math.min(255 * (1 - Math.abs(hue - 120) / 120) * 2, 255);
+    }
+
+    if (120 < hue) {
+      b = Math.min(255 * (1 - Math.abs(hue - 240) / 120) * 2, 255);
+    }
+
+    return {
+      r,
+      g,
+      b
+    };
   }
 
 }

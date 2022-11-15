@@ -46,6 +46,7 @@ import { TemperaturePipe } from './pipes/temperature.pipe';
 import { AttributePipe } from './pipes/attribute.pipe';
 import { ColorAveragePipe } from './pipes/color-average.pipe';
 import { ColorPipe } from './pipes/color.pipe';
+import { HorizontalSliderComponent } from './components/horizontal-slider/horizontal-slider.component';
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import { ColorPipe } from './pipes/color.pipe';
     AttributePipe,
     ColorAveragePipe,
     ColorPipe,
+    HorizontalSliderComponent,
   ],
   imports: [
     BrowserModule,
